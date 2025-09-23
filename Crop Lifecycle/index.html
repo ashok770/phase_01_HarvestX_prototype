@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Crop Lifecycle Tracker</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&family=Open+Sans:wght@400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="background-animation"></div>
+    <div class="container">
+        <h1>🌱 Crop Lifecycle Tracker 🌾</h1>
+        <form id="cropForm">
+            <div class="form-group">
+                <label for="crop_name">Select Crop:</label>
+                <select name="crop_name" id="crop_name">
+                    <option value="Maize (Corn)">Maize (Corn)</option>
+                    <option value="Wheat">Wheat</option>
+                    <option value="Rice">Rice</option>
+                    <option value="Potatoes">Potatoes</option>
+                    <option value="Sugarcane">Sugarcane</option>
+                    <option value="Soybeans">Soybeans</option>
+                    <option value="Cassava">Cassava</option>
+                    <option value="Barley">Barley</option>
+                    <option value="Tomatoes">Tomatoes</option>
+                    <option value="Bananas">Bananas</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="sowing_date">Sowing Date:</label>
+                <input type="date" name="sowing_date" id="sowing_date" required>
+            </div>
+            <button type="submit" class="btn">Generate Calendar</button>
+        </form>
+
+        <div id="calendar_results">
+            <p class="initial-message">Select a crop and sowing date to generate its lifecycle calendar.</p>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

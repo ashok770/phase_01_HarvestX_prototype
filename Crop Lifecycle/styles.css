@@ -1,0 +1,160 @@
+/* Body & background */
+body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: linear-gradient(135deg, #e0ffe0, #c8f7c5);
+    min-height: 100vh;
+    margin: 0;
+    font-family: 'Montserrat', sans-serif;
+    overflow: hidden;
+}
+
+/* Floating background bubbles */
+.background-animation {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    overflow: hidden;
+}
+
+.bubble {
+    position: absolute;
+    border-radius: 50%;
+    background: rgba(67, 160, 71, 0.2);
+    animation: floatBubble linear infinite;
+}
+
+@keyframes floatBubble {
+    0% { transform: translateY(100vh) scale(0.5); opacity: 0.3; }
+    50% { opacity: 0.6; }
+    100% { transform: translateY(-50px) scale(1); opacity: 0; }
+}
+
+/* Container (mobile app size) */
+.container {
+    width: 430px;
+    height: 932px;
+    max-width: 95%;
+    background: #ffffffcc;
+    backdrop-filter: blur(10px);
+    border-radius: 30px;
+    box-shadow: 0 20px 50px rgba(0,0,0,0.25);
+    padding: 30px;
+    overflow-y: auto;
+    scroll-behavior: smooth;
+    animation: fadeIn 1s ease-in-out;
+}
+
+/* Title animation */
+h1 {
+    text-align: center;
+    font-size: 2.2rem;
+    color: #2e7d32;
+    margin-bottom: 25px;
+    letter-spacing: 1px;
+    animation: pulse 2s infinite;
+}
+
+/* Form inputs */
+label {
+    font-weight: 600;
+    color: #3e3e3e;
+    display: block;
+    margin-bottom: 10px;
+}
+
+input, select, button {
+    width: 100%;
+    padding: 14px;
+    margin-bottom: 20px;
+    border-radius: 12px;
+    border: 2px solid #81c784;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+}
+
+input:focus, select:focus {
+    outline: none;
+    border-color: #43a047;
+    box-shadow: 0 0 15px rgba(67,160,71,0.3);
+}
+
+/* Button hover animation */
+button {
+    background: linear-gradient(45deg, #43a047, #66bb6a);
+    color: white;
+    font-weight: bold;
+    cursor: pointer;
+    border: none;
+    font-size: 1.1rem;
+    transition: transform 0.3s ease, background 0.3s ease, box-shadow 0.3s ease;
+}
+
+button:hover {
+    transform: scale(1.1) rotate(-1deg);
+    background: linear-gradient(45deg, #66bb6a, #43a047);
+    box-shadow: 0 5px 25px rgba(0,0,0,0.25);
+}
+
+/* Calendar results with card animation */
+#calendar_results {
+    margin-top: 20px;
+    padding: 20px;
+    background: #f1f8e9;
+    border-radius: 20px;
+    box-shadow: inset 0 0 15px rgba(0,0,0,0.05);
+    min-height: 120px;
+    transition: all 0.3s ease;
+}
+
+#calendar_results ul {
+    list-style: none;
+    padding: 0;
+}
+
+#calendar_results li {
+    background: linear-gradient(135deg, #a5d6a7, #81c784);
+    padding: 15px 18px;
+    margin: 12px 0;
+    border-radius: 15px;
+    color: #1b5e20;
+    font-weight: 600;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+    transform: translateX(-50px) scale(0.9);
+    opacity: 0;
+    animation: slideInCard 0.6s forwards;
+}
+
+#calendar_results li:nth-child(1) { animation-delay: 0.1s; }
+#calendar_results li:nth-child(2) { animation-delay: 0.2s; }
+#calendar_results li:nth-child(3) { animation-delay: 0.3s; }
+
+/* Animations */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes slideInCard {
+    to { transform: translateX(0) scale(1); opacity: 1; }
+}
+
+@keyframes pulse {
+    0%, 100% { transform: scale(1); color: #2e7d32; }
+    50% { transform: scale(1.05); color: #1b5e20; }
+}
+
+/* Responsive for smaller devices */
+@media (max-width: 450px) {
+    .container {
+        width: 95%;
+        height: 90vh;
+        padding: 20px;
+    }
+
+    h1 { font-size: 1.8rem; }
+    input, select, button { padding: 12px; font-size: 0.95rem; }
+}
