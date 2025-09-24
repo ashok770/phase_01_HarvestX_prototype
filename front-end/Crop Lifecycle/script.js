@@ -1,74 +1,38 @@
-// ================================
-// Crop Lifecycle Tracker JS
-// ================================
+const cropForm = document.getElementById("cropForm");
+const results = document.getElementById("calendar_results");
 
-// Get the form element
-const cropForm = document.getElementById('cropForm');
+// Fake lifecycle data
+const cropLifecycle = {
+  "Maize (Corn)": ["Sowing → Week 1", "Vegetative → Week 4", "Flowering → Week 8", "Harvest → Week 16"],
+  "Wheat": ["Sowing → Week 1", "Tillering → Week 3", "Booting → Week 6", "Harvest → Week 14"],
+  "Rice": ["Sowing → Week 1", "Transplanting → Week 3", "Flowering → Week 9", "Harvest → Week 18"],
+  "Potatoes": ["Planting → Week 1", "Tuber Initiation → Week 4", "Bulking → Week 8", "Harvest → Week 12"],
+  "Sugarcane": ["Planting → Week 1", "Tillering → Week 6", "Grand Growth → Week 12", "Harvest → Week 40"],
+  "Soybeans": ["Sowing → Week 1", "Flowering → Week 5", "Pod Filling → Week 9", "Harvest → Week 14"],
+  "Cassava": ["Planting → Week 1", "Root Development → Week 8", "Bulking → Week 20", "Harvest → Week 40"],
+  "Barley": ["Sowing → Week 1", "Tillering → Week 3", "Flowering → Week 7", "Harvest → Week 12"],
+  "Tomatoes": ["Sowing → Week 1", "Flowering → Week 5", "Fruit Set → Week 8", "Harvest → Week 12"],
+  "Bananas": ["Planting → Month 1", "Vegetative Growth → Month 4", "Flowering → Month 8", "Harvest → Month 12"]
+};
 
-// Listen for form submission
-cropForm.addEventListener('submit', function(event) {
-    event.preventDefault(); // Prevent default form submission
+cropForm.addEventListener("submit", function(e) {
+  e.preventDefault();
+  const crop = document.getElementById("crop_name").value;
+  const sowingDate = document.getElementById("sowing_date").value;
 
-    // ================================
-    // Collect form data
-    // ================================
-    const formData = new FormData(cropForm); // Get form data
-    const data = Object.fromEntries(formData.entries()); // Convert to JS object
-    // Example: { crop_name: "Maize (Corn)", sowing_date: "2025-09-23" }
+  if (!crop || !sowingDate) {
+    results.innerHTML = `<p>Please select a crop and date.</p>`;
+    return;
+  }
 
-    // Get the results div and show loading message
-    const resultsDiv = document.getElementById('calendar_results');
-    resultsDiv.innerHTML = '<p style="color: #2e7d32; font-weight: bold;">Fetching calendar...</p>';
+  // Show typing indicator
+  results.innerHTML = `<div class="typing-indicator"><span></span><span></span><span></span></div>`;
 
-    // ================================
-    // Connect to API using fetch()
-    // ================================
-    fetch('YOUR_API_URL_HERE', { // Replace with your API URL
-        method: 'POST',           // POST method to send data
-        headers: {
-            'Content-Type': 'application/json' // Sending JSON
-        },
-        body: JSON.stringify(data) // Convert JS object to JSON string
-    })
-    .then(response => {
-        // Check for HTTP errors
-        if (!response.ok) {
-            throw new Error(`Network response was not ok (${response.status})`);
-        }
-        return response.json(); // Parse JSON response
-    })
-    .then(result => {
-        // Clear previous results
-        resultsDiv.innerHTML = '';
-
-        // Handle API errors
-        if (result.error) {
-            resultsDiv.innerHTML = `<p style="color:red; font-weight:bold;">⚠️ Error: ${result.error}</p>`;
-            return;
-        }
-
-        // Display events if available
-        if (result.events && result.events.length > 0) {
-            const list = document.createElement('ul');
-
-            result.events.forEach((ev, index) => {
-                const listItem = document.createElement('li');
-                // Format: Date → Event
-                listItem.innerHTML = `<b>${ev.date}</b> → 🌾 ${ev.event}`;
-                listItem.style.animationDelay = `${0.1 * index}s`; // staggered animation
-                list.appendChild(listItem);
-            });
-
-            resultsDiv.appendChild(list);
-        } else {
-            // No events returned
-            resultsDiv.innerHTML = '<p style="color:gray;">🌱 No events found for this crop.</p>';
-        }
-    })
-    .catch(error => {
-        // Network or fetch error
-        console.error('Error:', error);
-        resultsDiv.innerHTML =
-            '<p style="color:red; font-weight:bold;">🚨 Failed to fetch calendar data. Check your API URL and network.</p>';
-    });
+  setTimeout(() => {
+    const phases = cropLifecycle[crop] || ["Lifecycle data not available."];
+    let html = `<h3>🌱 Lifecycle for ${crop}</h3><p><strong>Sowing Date:</strong> ${sowingDate}</p><ul>`;
+    phases.forEach(stage => html += `<li>${stage}</li>`);
+    html += "</ul>";
+    results.innerHTML = html;
+  }, 1200);
 });

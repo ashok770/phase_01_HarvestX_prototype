@@ -23,11 +23,11 @@ body {
 
 /* ================= iPHONE 16 PRO MAX FRAME ================= */
 .mobile-frame {
-  width: 430px;   
-  height: 932px;  
+  width: 430px;
+  height: 932px;
   background: #fff;
   border-radius: 50px;
-  border: 12px solid #111; 
+  border: 12px solid #111;
   box-shadow: 0 25px 60px rgba(0,0,0,0.4);
   overflow: hidden;
   display: flex;
@@ -61,20 +61,24 @@ body {
 }
 
 /* ================= HEADER ================= */
-.container h1 {
+.app-header h1 {
   font-size: 22px;
   color: var(--primary-color);
   margin-bottom: 20px;
   line-height: 1.4;
 }
 
-/* ================= FORM ================= */
-.form-group {
-  text-align: left;
-  margin-bottom: 18px;
+/* ================= FORM / INPUT SECTION ================= */
+.input-section {
+  margin-bottom: 20px;
 }
 
-.form-group label {
+.input-group {
+  text-align: left;
+  margin-bottom: 15px;
+}
+
+.input-group label {
   font-size: 14px;
   font-weight: 600;
   display: block;
@@ -82,8 +86,7 @@ body {
   color: var(--text-color);
 }
 
-.form-group select,
-.form-group input {
+.input-group select {
   width: 100%;
   padding: 12px 14px;
   border-radius: 10px;
@@ -92,8 +95,7 @@ body {
   transition: 0.3s;
 }
 
-.form-group select:focus,
-.form-group input:focus {
+.input-group select:focus {
   border-color: var(--primary-color);
   box-shadow: 0 0 0 3px rgba(46,125,50,0.3);
   outline: none;
@@ -115,9 +117,9 @@ body {
 .btn:hover { background: #1b5e20; transform: scale(1.03); }
 .btn:active { transform: scale(0.95); }
 
-/* ================= RESULTS ================= */
-#calendar_results {
-  margin-top: 22px;
+/* ================= SCHEMES SECTION ================= */
+.schemes-section {
+  margin-top: 20px;
   background: var(--background-color);
   padding: 16px;
   border-radius: 14px;
@@ -127,11 +129,7 @@ body {
   animation: fadeInUp 0.6s ease;
 }
 
-.initial-message {
-  opacity: 0.7;
-  font-size: 14px;
-  text-align: center;
-}
+.hidden { display: none; }
 
 /* ================= ANIMATIONS ================= */
 @keyframes fadeIn {
