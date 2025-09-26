@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Farmer's Friend App - Dashboard</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700;900&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        :root {
+            --primary-green: #298c56;
+            --light-green: #e9faee;
+            --off-white: #FFFFFF;
+            --frame-bg-start: #298c56;
+            --frame-bg-end: #6ec094;
+            --primary-dark: #1f5c3c;
+            --primary-light: #6ec094;
+        }
+
+        /* ================= Base ================= */
+        body {
+            font-family: 'Roboto', sans-serif;
+            color: var(--primary-dark);
+            overflow: hidden;
+            background: radial-gradient(circle, #e9faee, #d1e3d6);
+        }
+
+        /* ================= iPhone Frame (Animated Border) ================= */
+        .mobile-frame {
+            width: 430px;
+            height: 932px;
+            background: linear-gradient(to bottom, var(--frame-bg-start), var(--frame-bg-end));
+            border-radius: 50px;
+            border: 10px solid #111;
+            box-shadow: 0 25px 60px rgba(0,0,0,0.4);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            padding: 15px;
+            transition: all 0.5s ease-in-out;
+            /* Subtle pulse on the frame */
+            animation: pulse-border 5s infinite alternate;
+        }
+
+        @keyframes pulse-border {
+            0% { box-shadow: 0 25px 60px rgba(0,0,0,0.4), inset 0 0 15px rgba(255, 255, 255, 0.1); }
+            100% { box-shadow: 0 30px 70px rgba(0,0,0,0.6), inset 0 0 25px rgba(255, 255, 255, 0.2); }
+        }
+
+        /* ================= App Container ================= */
+        .app-container {
+            padding-bottom: 20px;
+            overflow-y: auto;
+            position: relative;
+            scrollbar-width: none;
+        }
+        .app-container::-webkit-scrollbar {
+            display: none;
+        }
+
+        /* ================= Header (Glow Effect) ================= */
+        .header-title {
+            font-size: 2rem;
+            font-weight: 800;
+            text-align: center;
+            color: var(--off-white);
+            text-shadow: 0 0 10px rgba(255,255,255,0.5);
+            /* Glow animation for emphasis */
+            animation: glow 2.5s infinite alternate;
+        }
+
+        @keyframes glow {
+            0% { text-shadow: 0 0 5px rgba(255,255,255,0.4); }
+            100% { text-shadow: 0 0 15px rgba(255,255,255,0.8); }
+        }
+
+        /* ================= Cards (Fade-in & Hover) ================= */
+        .dashboard {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 16px;
+            padding: 20px 10px 40px 10px;
+        }
+
+        .card, .card-link {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            border-radius: 20px;
+            background: rgba(255, 255, 255, 0.883); 
+            backdrop-filter: blur(8px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+            cursor: pointer;
+            transition: transform 0.3s cubic-bezier(0.25,0.8,0.25,1), box-shadow 0.3s ease, background 0.3s ease;
+            text-align: center;
+            gap: 12px;
+            font-weight: 600;
+            min-height: 120px;
+            color: var(--primary-dark);
+            text-decoration: none; /* Important for links */
+            /* Initial state for fadeInUp */
+            opacity: 0; 
+            transform: translateY(20px);
+            /* FadeUp on load */
+            animation: fadeInUp 0.8s ease forwards;
+        }
+
+        .card:hover, .card-link:hover {
+            transform: translateY(-5px) scale(1.03);
+            box-shadow: 0 18px 45px rgba(0,0,0,0.3);
+            background: rgba(255, 255, 255, 0.9);
+        }
+
+        /* Staggered Fade-in-Up effect */
+        .dashboard .card-link:nth-child(1) { animation-delay: 0.1s; }
+        .dashboard .card-link:nth-child(2) { animation-delay: 0.2s; }
+        .dashboard .card-link:nth-child(3) { animation-delay: 0.3s; }
+        .dashboard .card-link:nth-child(4) { animation-delay: 0.4s; }
+        .dashboard .card-link:nth-child(5) { animation-delay: 0.5s; }
+        .dashboard .card-link:nth-child(6) { animation-delay: 0.6s; }
+
+        @keyframes fadeInUp {
+            0% { opacity: 0; transform: translateY(20px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+
+        /* ================= Content Sections (Page Transition) ================= */
+        /* Removed .content-section style since content is on separate pages */
+        
+        /* ================= About Section (Smooth Expand/Collapse) ================= */
+        .about-section {
+            padding: 20px;
+            max-height: 0;
+            opacity: 0;
+            overflow: hidden;
+            /* Smooth transition for height and opacity */
+            transition: max-height 0.7s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.5s ease;
+        }
+
+        .about-section.active {
+            max-height: 3000px; /* Increased to accommodate more content */
+            opacity: 1;
+        }
+
+        /* ================= Buttons (Gradient & Hover) ================= */
+        .button {
+            border-radius: 9999px;
+            padding: 1rem 2.5rem;
+            color: white;
+            font-weight: 700;
+            text-align: center;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            transition: transform 0.3s ease, box-shadow 0.3s ease, background-color 0.3s ease;
+            letter-spacing: 0.5px;
+            /* Gold/Orange Gradient */
+            background: linear-gradient(to right, #FFD700, #FFA500); 
+            display: inline-block;
+            border: 2px solid var(--off-white);
+        }
+
+        .button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(255,165,0,0.4);
+            background: linear-gradient(to right, #FFA500, #FFD700);
+        }
+        
+        /* Back button styles are only needed in the content pages, removed from index.html CSS for cleanliness */
+
+        /* Responsive Tweaks */
+        @media screen and (max-width: 500px) {
+            .mobile-frame {
+                width: 95%;
+                height: 90vh;
+                padding: 10px;
+            }
+            .dashboard {
+                grid-template-columns: 1fr;
+                gap: 12px;
+            }
+        }
+    </style>
+</head>
+<body class="flex items-center justify-center min-h-screen bg-light-green">
+
+    <div class="mobile-frame">
+        <div class="app-container flex-1 overflow-auto">
+            <header class="text-center my-8">
+                <h1 class="text-4xl font-extrabold text-off-white header-title">👨‍🌾Agrova</h1>
+                <p class="mt-1 text-sm text-green-200 tracking-wider">Your daily agricultural assistant</p>
+            </header>
+
+            <div id="app-content"> 
+                <div id="dashboard-section" class="px-4 dashboard">
+                    <a href="crop.html" class="card-link" data-page="crop-page">
+                        <div>🌿</div>
+                        <span>Crop Lifecycle</span>
+                    </a>
+                    <a href="market.html" class="card-link" data-page="market-page">
+                        <div>💰</div>
+                        <span>Market Prices</span>
+                    </a>
+                    <a href="weather.html" class="card-link" data-page="weather-page">
+                        <div>🌤️</div>
+                        <span>Weather Updates</span>
+                    </a>
+                    <a href="pest.html" class="card-link" data-page="pest-page">
+                        <div>🐛</div>
+                        <span>Pest Control</span>
+                    </a>
+                    <a href="schemes.html" class="card-link" data-page="schemes-page">
+                        <div>🌾</div>
+                        <span>Govt Schemes</span>
+                    </a>
+                    <a href="chatbot.html" class="card-link col-span-2" data-page="chatbot-page">
+                        <div>💬</div>
+                        <span>Chatbot & Support</span>
+                    </a>
+                </div>
+
+                <div class="my-6 text-center">
+                    <button id="about-more-button" class="button">
+                        About More
+                    </button>
+                </div>
+
+                <div id="about-section" class="about-section my-6 px-4">
+                    <div class="card about-card !cursor-default !transform-none !box-shadow-none bg-white">
+                        <h3 class="title text-center text-xl font-semibold">More About Farmer's Friend</h3>
+                        <p class="mt-4 text-sm leading-relaxed text-gray-700 text-left">
+                            Welcome to **Farmer's Friend**, your comprehensive digital assistant for all things agriculture. Our mission is to empower farmers with timely, accurate, and accessible information. This app provides essential tools to help you make informed decisions, optimize crop yields, and manage resources efficiently.
+                        </p>
+                        <div class="mt-4 text-left w-full">
+                            <h4 class="font-bold text-gray-800">Advanced App Features and Practices:</h4>
+                            <ul class="list-disc list-inside mt-2 text-gray-600 space-y-2 text-sm">
+                                <li>**Crop Lifecycle (Enhanced):** Use our **advanced crop monitoring tool** to track vegetative growth, flowering, and maturity stages with high precision, ensuring optimal timing for fertilization and harvest.</li>
+                                <li>**Pest Control (Proactive):** Check the app daily for **predictive models** that forecast pest and disease outbreaks based on local humidity and temperature. This allows for proactive, targeted control measures, reducing chemical use.</li>
+                                <li>**Weather Updates (Microclimate):** Access **hyper-local, hour-by-hour weather data** including soil temperature, wind speed, and dew point, which is crucial for effective spraying and irrigation scheduling.</li>
+                                <li>**Government Schemes (Direct Access):** Utilize the **in-app eligibility checker** to verify your status for new government subsidies and receive timely alerts on application deadlines and required documentation.</li>
+                                <li>**Market Insights:** Receive automated alerts for price changes in your primary crops and get historical data analysis to maximize sale returns.</li>
+                                <li>**Soil Management:** Regularly check soil pH and nutrient levels to ensure optimal growth conditions. A balanced soil is the foundation of a healthy crop.</li>
+                                <li>**Water Conservation:** Practice efficient irrigation techniques like drip irrigation or rainwater harvesting to save water resources and reduce costs.</li>
+                            </ul>
+                        </div>
+
+                        <div class="mt-6 w-full text-center">
+                            <h4 class="font-bold text-xl mb-3 text-primary-dark">In-Depth Learning Resources</h4>
+                            <a href="https://www.manage.gov.in/publications/farmerbook.pdf" target="_blank" class="button !bg-green-600 hover:!bg-green-700">
+                                Download Comprehensive Farmer's Handbook (PDF)
+                            </a>
+                            <p class="text-xs text-gray-500 mt-2">Source: MANAGE (National Institute of Agricultural Extension Management)</p>
+                        </div>
+                        
+                        <div class="about-video mt-6 w-full aspect-video">
+                            <video autoplay muted controls loop width="100%" height="100%">
+                                <source src="Farmmer.mp4" type="video/mp4">
+                                Your browser does not support the video tag.
+                            </video>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const aboutButton = document.getElementById('about-more-button');
+            const aboutSection = document.getElementById('about-section');
+            
+            // Handle the "About More" button click event (using CSS class for smooth expand)
+            aboutButton.addEventListener('click', () => {
+                const isActive = aboutSection.classList.contains('active');
+                
+                if (!isActive) {
+                    // Show: Add active class to trigger max-height/opacity transition
+                    aboutSection.classList.add('active');
+                    // Scroll to the new content after a slight delay
+                    setTimeout(() => {
+                        aboutSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    }, 100); 
+                } else {
+                    // Hide: Remove active class
+                    aboutSection.classList.remove('active');
+                }
+            });
+        });
+    </script>
+</body>
+</html>

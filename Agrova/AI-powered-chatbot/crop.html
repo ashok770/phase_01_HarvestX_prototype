@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Crop Lifecycle Tracker</title>
+    <!-- Removed Montserrat and Open Sans fonts to use a consistent websafe font -->
+    <style>
+        /* ================= THEME ================= */
+        :root {
+          --primary-color: #2e7d32;
+          --secondary-color: #5d4037;
+          --background-color: #e8f5e9;
+          --header-bg: #2e7d32;
+          --header-text: #fff;
+          --text-color: #333;
+          --card-bg: #fff;
+        }
+
+        /* ================= BODY ================= */
+        body {
+          background: linear-gradient(135deg, #c8e6c9, #a5d6a7);
+          /* Changed font to Georgia to match the dashboard */
+          font-family: 'Georgia', serif;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          min-height: 100vh;
+          margin: 0;
+          overflow: hidden;
+        }
+
+        /* ================= iPHONE 16 PRO MAX FRAME ================= */
+        .mobile-frame {
+          width: 430px;
+          height: 932px;
+          background: #fff;
+          border-radius: 50px;
+          border: 12px solid #111;
+          box-shadow: 0 25px 60px rgba(0,0,0,0.4);
+          overflow: hidden;
+          display: flex;
+          flex-direction: column;
+          position: relative;
+        }
+
+        /* Notch */
+        .notch {
+          position: absolute;
+          top: 0;
+          left: 50%;
+          transform: translateX(-50%);
+          width: 180px;
+          height: 30px;
+          background: #111;
+          border-bottom-left-radius: 20px;
+          border-bottom-right-radius: 20px;
+          z-index: 10;
+        }
+
+        /* ================= APP CONTAINER ================= */
+        .container {
+          flex: 1;
+          background: var(--card-bg);
+          border-radius: 0;
+          padding: 25px;
+          text-align: center;
+          animation: fadeIn 0.8s ease-in-out;
+          overflow-y: auto;
+        }
+
+        /* ================= HEADER ================= */
+        .container h1 {
+          font-size: 22px;
+          color: var(--primary-color);
+          margin-bottom: 20px;
+          line-height: 1.4;
+        }
+
+        /* ================= FORM ================= */
+        .input-group { /* Changed from .form-group for consistency */
+          text-align: left;
+          margin-bottom: 18px;
+        }
+
+        .input-group label { /* Changed from .form-group label */
+          font-size: 14px;
+          font-weight: 600;
+          display: block;
+          margin-bottom: 6px;
+          color: var(--text-color);
+        }
+
+        .input-group select,
+        .input-group input[type="date"] { /* Targeted specific input type */
+          width: 100%;
+          padding: 12px 14px;
+          border-radius: 10px;
+          border: 2px solid #ccc;
+          font-size: 15px;
+          transition: 0.3s;
+          background-color: #fff; /* Ensure white background */
+          -webkit-appearance: none; /* Remove default browser styling for select/date */
+          -moz-appearance: none;
+          appearance: none;
+          position: relative;
+          font-family: 'Georgia', serif;
+        }
+
+        /* Custom arrow for select */
+        .input-group select {
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23666' width='24px' height='24px'%3E%3Cpath d='M7 10l5 5 5-5z'/%3E%3Cpath d='M0 0h24v24H0z' fill='none'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 10px center;
+            padding-right: 30px; /* Make space for the custom arrow */
+        }
+        
+        /* Clear default date picker icon for consistency */
+        .input-group input[type="date"]::-webkit-calendar-picker-indicator {
+            background: none;
+            width: 24px;
+            height: 24px;
+            cursor: pointer;
+            position: absolute;
+            right: 10px;
+            opacity: 1;
+            /* You can add a custom SVG icon here as well if needed */
+        }
+
+        .input-group select:focus,
+        .input-group input[type="date"]:focus { /* Targeted specific input type */
+          border-color: var(--primary-color);
+          box-shadow: 0 0 0 3px rgba(46,125,50,0.3);
+          outline: none;
+        }
+
+        /* ================= BUTTON ================= */
+        .btn {
+          width: 100%;
+          background: var(--primary-color);
+          color: #fff;
+          padding: 14px;
+          border-radius: 12px;
+          border: none;
+          cursor: pointer;
+          font-size: 16px;
+          font-weight: 600;
+          transition: 0.2s;
+        }
+        .btn:hover { background: #1b5e20; transform: scale(1.03); }
+        .btn:active { transform: scale(0.95); }
+
+        /* ================= RESULTS ================= */
+        #calendar_results {
+          margin-top: 22px;
+          background: var(--background-color);
+          padding: 16px;
+          border-radius: 14px;
+          min-height: 80px;
+          font-size: 15px;
+          color: var(--text-color);
+          animation: fadeInUp 0.6s ease;
+        }
+
+        .initial-message, .error-message, .loading-message, .no-events-message {
+            opacity: 0.7;
+            font-size: 14px;
+            text-align: center;
+            padding: 10px;
+        }
+
+        .error-message {
+            color: red;
+        }
+
+        .event-card {
+            background-color: #fff;
+            padding: 12px 15px;
+            border-radius: 10px;
+            margin-bottom: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+            border-left: 4px solid var(--primary-color);
+            text-align: left;
+            transition: transform 0.2s ease;
+        }
+
+        .event-card:hover {
+            transform: translateY(-3px);
+        }
+
+        .event-card h3 {
+            margin: 0;
+            font-size: 16px;
+            color: var(--primary-color);
+        }
+
+        .event-card p {
+            margin: 4px 0 0;
+            font-size: 13px;
+            color: var(--secondary-color);
+        }
+
+        /* ================= ANIMATIONS ================= */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: scale(0.95); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Floating bubbles background */
+        .background-animation {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            z-index: -1;
+            overflow: hidden;
+        }
+        .background-animation::before,
+        .background-animation::after {
+            content: '';
+            position: absolute;
+            width: 300px; height: 300px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.15);
+            animation: float 10s infinite;
+        }
+        .background-animation::after {
+            width: 200px; height: 200px;
+            top: 20%; left: 70%;
+            animation-duration: 14s;
+        }
+
+        @keyframes float {
+            0% { transform: translateY(0) translateX(0); }
+            50% { transform: translateY(-40px) translateX(30px); }
+            100% { transform: translateY(0) translateX(0); }
+        }
+    </style>
+</head>
+<body>
+    <div class="background-animation"></div>
+
+    <div class="mobile-frame">
+        <div class="container">
+            <header class="app-header">
+                <h1>🌱 Crop Lifecycle Tracker 🌾</h1>
+            </header>
+
+            <form id="cropForm">
+                <section class="input-section">
+                    <div class="input-group">
+                        <label for="crop_name">Select Crop:</label>
+                        <select name="crop_name" id="crop_name">
+                            </select>
+                    </div>
+
+                    <div class="input-group">
+                        <label for="sowing_date">Sowing Date:</label>
+                        <input type="date" name="sowing_date" id="sowing_date" required>
+                    </div>
+
+                    <button type="submit" class="btn">Generate Calendar</button>
+                </section>
+            </form>
+
+            <section id="calendar_results" class="schemes-section">
+                <p class="initial-message">Select a crop and sowing date to generate its lifecycle calendar.</p>
+            </section>
+        </div>
+    </div>
+
+    <script>
+        const cropData = {
+          "crops": [
+            {
+              "name": "Maize (Corn)",
+              "timeline": "80–110 days",
+              "key_events": [
+                {"day": "0", "event": "Sowing"},
+                {"day": "20–25", "event": "First Nitrogen application"},
+                {"day": "40–50", "event": "Tasseling and second Nitrogen application"},
+                {"day": "60–70", "event": "Silking and grain filling"},
+                {"day": "90–110", "event": "Harvest"}
+              ]
+            },
+            {
+              "name": "Wheat",
+              "timeline": "120–150 days",
+              "key_events": [
+                {"day": "0", "event": "Sowing"},
+                {"day": "21", "event": "First Irrigation (Crown Root Initiation)"},
+                {"day": "40", "event": "Second Irrigation (Jointing stage)"},
+                {"day": "60–65", "event": "Third Irrigation (Boot/Flowering stage)"},
+                {"day": "120+", "event": "Harvest"}
+              ]
+            },
+            {
+              "name": "Rice",
+              "timeline": "100–150 days",
+              "key_events": [
+                {"day": "0", "event": "Sowing in nursery"},
+                {"day": "20–25", "event": "Transplanting to main field"},
+                {"day": "30–40", "event": "Tillering (new shoots from base)"},
+                {"day": "60–70", "event": "Panicle initiation"},
+                {"day": "80–90", "event": "Flowering/Grain filling"},
+                {"day": "100+", "event": "Harvest"}
+              ]
+            },
+            {
+              "name": "Potatoes",
+              "timeline": "90–120 days",
+              "key_events": [
+                {"day": "0", "event": "Planting"},
+                {"day": "5–10", "event": "First Irrigation for germination"},
+                {"day": "20–25", "event": "First Earthing up"},
+                {"day": "40–50", "event": "Second Earthing up"},
+                {"day": "60–70", "event": "Tuber development"},
+                {"day": "90+", "event": "Harvest"}
+              ]
+            },
+            {
+              "name": "Sugarcane",
+              "timeline": "300–540 days",
+              "key_events": [
+                {"day": "0", "event": "Planting"},
+                {"day": "30–40", "event": "First Irrigation and Budding"},
+                {"day": "90–120", "event": "Tillering and first weeding"},
+                {"day": "150–200", "event": "Cane elongation"},
+                {"day": "300+", "event": "Harvest"}
+              ]
+            },
+            {
+              "name": "Soybeans",
+              "timeline": "90–120 days",
+              "key_events": [
+                {"day": "0", "event": "Sowing"},
+                {"day": "20–30", "event": "Weeding and first intercultural operation"},
+                {"day": "40–50", "event": "Flowering and pod formation"},
+                {"day": "60–70", "event": "Pod filling"},
+                {"day": "90+", "event": "Harvest"}
+              ]
+            },
+            {
+              "name": "Cassava",
+              "timeline": "240–540 days",
+              "key_events": [
+                {"day": "0", "event": "Planting stem cuttings"},
+                {"day": "30–45", "event": "First weeding"},
+                {"day": "60–90", "event": "Second weeding and Earthing up"},
+                {"day": "150+", "event": "Root bulking stage"},
+                {"day": "240+", "event": "Harvest"}
+              ]
+            },
+            {
+              "name": "Barley",
+              "timeline": "110–130 days",
+              "key_events": [
+                {"day": "0", "event": "Sowing"},
+                {"day": "20–25", "event": "First Irrigation"},
+                {"day": "40–45", "event": "Second Irrigation"},
+                {"day": "70–80", "event": "Flowering"},
+                {"day": "110+", "event": "Harvest"}
+              ]
+            },
+            {
+              "name": "Tomatoes",
+              "timeline": "90–120 days",
+              "key_events": [
+                {"day": "0", "event": "Transplanting"},
+                {"day": "5–10", "event": "First Irrigation"},
+                {"day": "20–25", "event": "First Fertilizer application and Weeding"},
+                {"day": "40–50", "event": "Flowering begins"},
+                {"day": "80–90", "event": "First Harvest"}
+              ]
+            },
+            {
+              "name": "Bananas",
+              "timeline": "365–540 days",
+              "key_events": [
+                {"day": "0", "event": "Planting"},
+                {"day": "90–120", "event": "First Fertilizer application"},
+                {"day": "180–240", "event": "Budding/Flowering"},
+                {"day": "270–300", "event": "Bunch emergence"},
+                {"day": "365+", "event": "Harvest"}
+              ]
+            }
+          ]
+        };
+
+        // Populate crop dropdown on page load
+        document.addEventListener('DOMContentLoaded', () => {
+            const cropSelect = document.getElementById('crop_name');
+            cropData.crops.forEach(crop => {
+                const option = document.createElement('option');
+                option.value = crop.name;
+                option.textContent = crop.name;
+                cropSelect.appendChild(option);
+            });
+        });
+
+        document.getElementById('cropForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+            const resultsDiv = document.getElementById('calendar_results');
+            resultsDiv.innerHTML = '<p class="loading-message">Generating calendar...</p>';
+
+            const cropName = document.getElementById('crop_name').value;
+            const sowingDateStr = document.getElementById('sowing_date').value;
+
+            if (!sowingDateStr) {
+                resultsDiv.innerHTML = '<p class="error-message">Error: Please select a sowing date.</p>';
+                return;
+            }
+
+            const sowingDate = new Date(sowingDateStr);
+            const selectedCrop = cropData.crops.find(crop => crop.name === cropName);
+
+            if (!selectedCrop) {
+                resultsDiv.innerHTML = '<p class="error-message">Error: Crop not found in data.</p>';
+                return;
+            }
+
+            const calendarEvents = [];
+            selectedCrop.key_events.forEach(eventData => {
+                const dayStr = eventData.day.replace('–', '-').replace('+', '');
+                let startDay, endDay;
+
+                if (dayStr.includes('-')) {
+                    [startDay, endDay] = dayStr.split('-').map(Number);
+                } else {
+                    startDay = Number(dayStr);
+                    endDay = startDay;
+                }
+
+                const eventDate = new Date(sowingDate);
+                eventDate.setDate(sowingDate.getDate() + startDay);
+                
+                let dateDisplay;
+                if (startDay !== endDay) {
+                    const endDate = new Date(sowingDate);
+                    endDate.setDate(sowingDate.getDate() + endDay);
+                    dateDisplay = `${eventDate.toISOString().slice(0, 10)} to ${endDate.toISOString().slice(0, 10)}`;
+                } else {
+                    dateDisplay = eventDate.toISOString().slice(0, 10);
+                }
+
+                calendarEvents.push({
+                    event: eventData.event,
+                    date: dateDisplay
+                });
+            });
+
+            resultsDiv.innerHTML = '';
+            if (calendarEvents.length > 0) {
+                calendarEvents.forEach(event => {
+                    const eventCard = document.createElement('div');
+                    eventCard.classList.add('event-card');
+                    eventCard.innerHTML = `<h3>${event.event}</h3><p>${event.date}</p>`;
+                    resultsDiv.appendChild(eventCard);
+                });
+            } else {
+                resultsDiv.innerHTML = '<p class="no-events-message">No events found for this crop.</p>';
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,497 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <title>👨‍🌾Agrova - Chatbot</title>
+    <style>
+/* ================= THEME ================= */
+:root {
+    --primary-green: #298c56;
+    --light-green: #e9faee;
+    --off-white: #FFFFFF;
+    --frame-bg-start: #298c56;
+    --frame-bg-end: #6ec094;
+    --primary-dark: #1f5c3c;
+    --primary-light: #6ec094;
+    --header-bg: var(--primary-green);
+    --header-text: var(--off-white);
+    --text-color: var(--primary-dark);
+}
+
+/* ================= Base ================= */
+body {
+    margin: 0;
+    padding: 0;
+    /* CHANGE: Replaced 'Roboto' with 'Georgia' */
+    font-family: 'Georgia', serif; 
+    color: var(--primary-dark);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background: radial-gradient(circle, #e9faee, #d1e3d6);
+    overflow: hidden;
+    animation: background-pulse 15s infinite alternate;
+}
+
+/* New background animation */
+@keyframes background-pulse {
+    0% { background-color: #e9faee; }
+    100% { background-color: #d1e3d6; }
+}
+
+/* ================= iPhone Frame (Animated Border) ================= */
+.mobile-frame {
+    width: 430px;
+    height: 932px;
+    background: var(--off-white);
+    border-radius: 50px;
+    border: 10px solid black;
+    box-shadow: 0 25px 60px rgba(0,0,0,0.4);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    padding: 15px;
+    transition: all 0.5s ease-in-out;
+    animation: pulse-border 5s infinite alternate;
+}
+
+@keyframes pulse-border {
+    0% { border-color: black; box-shadow: 0 25px 60px rgba(0,0,0,0.4), inset 0 0 15px rgba(255, 255, 255, 0.1); }
+    100% { border-color: var(--primary-dark); box-shadow: 0 30px 70px rgba(0,0,0,0.6), inset 0 0 25px rgba(255, 255, 255, 0.2); }
+}
+
+/* ================= App Container ================= */
+.app-container {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    height: 100%;
+}
+.app-container::-webkit-scrollbar {
+    display: none;
+}
+
+/* ================= Header ================= */
+.app-header {
+    background: var(--header-bg);
+    color: var(--header-text);
+    text-align: center;
+    padding: 18px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+    border-radius: 40px;
+    margin-bottom: 10px;
+    animation: header-bounce 1s ease-out forwards;
+}
+
+@keyframes header-bounce {
+    0% { transform: translateY(-50px); opacity: 0; }
+    60% { transform: translateY(10px); opacity: 1; }
+    80% { transform: translateY(-5px); }
+    100% { transform: translateY(0); }
+}
+
+.app-header h1 {
+    font-size: 22px;
+    font-weight: bold;
+    margin: 0;
+}
+.app-header p {
+    font-size: 13px;
+    opacity: 0.9;
+    margin-top: 4px;
+}
+
+/* ================= CHAT AREA ================= */
+.chat-area {
+    flex: 1;
+    padding: 15px;
+    overflow-y: auto;
+    background: rgba(255, 255, 255, 0.5); /* Glassmorphism effect */
+    border-radius: 20px;
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+}
+.chat-area::-webkit-scrollbar {
+    display: none;
+}
+
+/* ================= MESSAGES ================= */
+@keyframes slideIn {
+    from { opacity: 0; transform: translateY(15px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+@keyframes bounceIn {
+    0% { transform: scale(0.5); opacity: 0; }
+    60% { transform: scale(1.2); opacity: 1; }
+    100% { transform: scale(1); }
+}
+
+.message {
+    max-width: 75%;
+    margin-bottom: 14px;
+    padding: 12px 15px;
+    border-radius: 20px;
+    line-height: 1.4;
+    font-size: 15px;
+    animation: slideIn 0.3s ease-out forwards;
+    position: relative;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.message:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+}
+
+.message.user {
+    background: var(--primary-dark);
+    color: var(--off-white);
+    margin-left: auto;
+    border-bottom-right-radius: 6px;
+}
+
+.message.bot {
+    background: var(--primary-green);
+    color: var(--off-white);
+    margin-right: auto;
+    border-bottom-left-radius: 6px;
+    padding-left: 55px;
+}
+
+/* Robot avatar */
+.message.bot::before {
+    content: "";
+    position: absolute;
+    left: -45px;
+    top: 5px;
+    width: 40px;
+    height: 40px;
+    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23fff'%3E%3Cpath d='M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 14c-1.33 0-4-.67-4-2.2v-1.2C8 12.06 9.4 11 12 11s4 1.06 4 2.6v1.2c0 1.53-2.67 2.2-4 2.2zm1-5h-2v-1h2v1zm-2-2h2V8h-2v1z'/%3E%3C/svg%3E") no-repeat center/cover;
+    border-radius: 50%;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+    animation: bounceIn 0.5s ease;
+}
+
+/* ================= TYPING INDICATOR ================= */
+@keyframes blink {
+    0%, 100% { opacity: 0.3; }
+    50% { opacity: 1; }
+}
+.typing-indicator {
+    display: flex;
+    align-items: center;
+    margin-right: auto;
+    margin-bottom: 12px;
+    padding: 10px 14px;
+    border-radius: 20px;
+    background: #f0f0f0;
+    max-width: 140px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+}
+.typing-indicator span {
+    width: 8px;
+    height: 8px;
+    margin: 0 2px;
+    background: var(--primary-green);
+    border-radius: 50%;
+    animation: blink 1.2s infinite both;
+}
+.typing-indicator span:nth-child(2) { animation-delay: 0.2s; }
+.typing-indicator span:nth-child(3) { animation-delay: 0.4s; }
+
+/* ================= INPUT BAR ================= */
+.chat-input {
+    display: flex;
+    padding: 15px;
+    background: var(--off-white);
+    align-items: center;
+    border-radius: 30px;
+    margin-top: 10px;
+    box-shadow: 0 -4px 15px rgba(0,0,0,0.1);
+    transition: box-shadow 0.3s ease;
+}
+
+.chat-input:focus-within {
+    box-shadow: 0 -4px 20px rgba(0,0,0,0.2);
+}
+
+.chat-input input {
+    flex: 1;
+    padding: 12px 20px;
+    border: 2px solid var(--light-green);
+    border-radius: 28px;
+    outline: none;
+    font-size: 15px;
+    transition: 0.3s;
+}
+.chat-input input:focus {
+    border-color: var(--primary-green);
+    box-shadow: 0 0 0 3px rgba(41,140,86,0.3);
+}
+
+/* Button Base Style */
+.chat-input button {
+    margin-left: 10px;
+    color: var(--off-white);
+    border: none;
+    border-radius: 50%;
+    width: 45px;
+    height: 45px;
+    font-size: 18px;
+    cursor: pointer;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 0;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+}
+
+.chat-input button:active {
+    transform: scale(0.9) translateY(2px);
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+}
+
+/* Send Button */
+#sendBtn {
+    background: var(--primary-green);
+}
+#sendBtn:hover { background: var(--primary-dark); transform: scale(1.05); }
+
+/* Microphone Button */
+#micBtn {
+    background: var(--primary-light);
+}
+#micBtn:hover { background: var(--primary-dark); transform: scale(1.05); }
+#micBtn svg {
+    width: 20px;
+    height: 20px;
+    fill: var(--off-white);
+}
+
+/* ================= Responsive Tweaks ================= */
+@media screen and (max-width: 500px) {
+    .mobile-frame {
+        width: 95%;
+        height: 90vh;
+        padding: 10px;
+    }
+}
+    </style>
+</head>
+<body>
+    <div class="background-animation"></div>
+
+    <div class="mobile-frame">
+        <div class="app-container">
+            <header class="app-header">
+                <h1>👨‍🌾Agrova</h1>
+                <p>Your AI Farming Assistant</p>
+            </header>
+
+            <main class="chat-area" id="chatArea"></main>
+
+            <footer class="chat-input">
+                <input type="text" id="userInput" placeholder="Type your message..." />
+                
+                <button id="micBtn">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                        <path d="M12 14c1.66 0 2.99-1.34 2.99-3L15 5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3zm5.3-2.99c0 3.53-2.61 6.44-6 6.93v2.06c0 .4-.31.75-.72.75s-.72-.35-.72-.75v-2.06c-3.39-.49-6-3.4-6-6.93h1.5c0 3.01 2.51 5.5 5.5 5.5s5.5-2.49 5.5-5.5h1.5z"/>
+                    </svg>
+                </button>
+                
+                <button id="sendBtn">➤</button>
+            </footer>
+        </div>
+    </div>
+
+    <script>
+const chatArea = document.getElementById("chatArea");
+const userInput = document.getElementById("userInput");
+const sendBtn = document.getElementById("sendBtn");
+const micBtn = document.getElementById("micBtn");
+
+// ============================
+// Helper: Add message to chat
+// ============================
+function addMessage(content, sender) {
+    const msg = document.createElement("div");
+    msg.classList.add("message", sender);
+    msg.textContent = content;
+    chatArea.appendChild(msg);
+    chatArea.scrollTop = chatArea.scrollHeight;
+}
+
+// ============================
+// Typing indicator
+// ============================
+function addTypingIndicator() {
+    const indicator = document.createElement("div");
+    indicator.classList.add("typing-indicator");
+    indicator.id = "typingIndicator";
+    indicator.innerHTML = `<span></span><span></span><span></span>`;
+    chatArea.appendChild(indicator);
+    chatArea.scrollTop = chatArea.scrollHeight;
+    return indicator;
+}
+
+function removeTypingIndicator(indicator) {
+    if (indicator) indicator.remove();
+}
+
+// ============================
+// Chatbot API call
+// ============================
+async function sendMessageToChatbot(message, sessionId) {
+    try {
+        const data = { message: message, session_id: sessionId };
+        // NOTE: The URL is set to a placeholder for your backend
+        const response = await fetch("http://127.0.0.1:5000/chat", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(data),
+        });
+
+        if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(`API Error: ${errorData.error}`);
+        }
+
+        const result = await response.json();
+        return result.response;
+    } catch (error) {
+        console.error("Error connecting to chatbot:", error);
+        return "Sorry, I'm having trouble connecting right now. Please try again later.";
+    }
+}
+
+// ============================
+// Handle user send (Text)
+// ============================
+async function handleSend() {
+    const text = userInput.value.trim();
+    if (!text) return;
+
+    addMessage(text, "user");
+    userInput.value = "";
+    
+    await processBotResponse(text);
+}
+
+// ============================
+// Handle Voice Input (UPDATED)
+// ============================
+let recognition;
+let isListening = false;
+
+function handleVoiceInput() {
+    // Check if the browser supports SpeechRecognition
+    if (!('SpeechRecognition' in window) && !('webkitSpeechRecognition' in window)) {
+        addMessage("Your browser does not support the Web Speech API. Please use a modern browser like Chrome or Edge.", "bot");
+        return;
+    }
+
+    if (isListening) {
+        recognition.stop();
+        return;
+    }
+
+    recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
+    recognition.lang = 'en-US'; // Set a language
+    recognition.interimResults = false;
+    recognition.maxAlternatives = 1;
+
+    // Fired when speech recognition starts
+    recognition.onstart = () => {
+        isListening = true;
+        micBtn.style.background = '#81c784'; // Change color to show it's active
+        addMessage("Listening for your message...", "bot");
+    };
+
+    // Fired when a result is received
+    recognition.onresult = (event) => {
+        const transcript = event.results[0][0].transcript;
+        if (transcript) {
+            addMessage(`(Voice) ${transcript}`, "user");
+            processBotResponse(transcript);
+        }
+    };
+
+    // Fired when the speech recognition service has disconnected
+    recognition.onend = () => {
+        isListening = false;
+        micBtn.style.background = ''; // Reset color
+    };
+
+    // Fired when there's an error
+    recognition.onerror = (event) => {
+        console.error("Speech recognition error", event.error);
+        if (event.error === 'not-allowed') {
+            addMessage("Permission to use the microphone was denied. Please allow it in your browser settings.", "bot");
+        } else {
+            addMessage("Sorry, there was an error with voice input. Please try again.", "bot");
+        }
+        isListening = false;
+        micBtn.style.background = ''; // Reset color
+    };
+
+    recognition.start();
+}
+
+// ============================
+// Unified Bot Response Processor
+// ============================
+async function processBotResponse(text) {
+    const indicator = addTypingIndicator();
+
+    // Use a unique session ID per user (here just a fixed example)
+    const sessionId = "user_abc123";
+
+    // Send user input to chatbot API
+    const botReply = await sendMessageToChatbot(text, sessionId);
+
+    // Optional: mimic typing delay based on response length
+    const delay = Math.min(1500, 500 + botReply.length * 35); 
+
+    setTimeout(() => {
+        removeTypingIndicator(indicator);
+        addMessage(botReply, "bot");
+    }, delay);
+}
+
+
+// ============================
+// Welcome message
+// ============================
+function showWelcomeMessage() {
+    setTimeout(() => {
+        addMessage(
+            "🤖 Welcome to Kisan Mitra! I am your AI farming assistant. Ask me about crops, weather, or pests. You can now also use the **microphone button** for voice input!",
+            "bot"
+        );
+    }, 600);
+}
+
+// ============================
+// Events
+// ============================
+sendBtn.addEventListener("click", handleSend);
+micBtn.addEventListener("click", handleVoiceInput); // NEW: Mic button handler
+
+userInput.addEventListener("keypress", (e) => {
+    if (e.key === "Enter") {
+        e.preventDefault();
+        handleSend();
+    }
+});
+
+// Show welcome message on load
+showWelcomeMessage();
+    </script>
+</body>
+</html>

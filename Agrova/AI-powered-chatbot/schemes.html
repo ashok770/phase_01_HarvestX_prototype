@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Government Schemes App</title>
+    <!-- Removed external font links to use a consistent websafe font -->
+    <style>
+        /* ================= THEME ================= */
+        :root {
+          --primary-color: #2e7d32;
+          --secondary-color: #5d4037;
+          --background-color: #e8f5e9;
+          --header-bg: #2e7d32;
+          --header-text: #fff;
+          --text-color: #333;
+          --card-bg: #fff;
+        }
+        /* ================= BODY ================= */
+        body {
+          background: linear-gradient(135deg, #c8e6c9, #a5d6a7);
+          /* Using websafe 'Georgia' font to match other apps */
+          font-family: 'Georgia', serif;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          min-height: 100vh;
+          margin: 0;
+          overflow: hidden;
+        }
+        /* ================= iPHONE 16 PRO MAX FRAME ================= */
+        .mobile-frame {
+          width: 430px;
+          height: 932px;
+          background: #fff;
+          border-radius: 50px;
+          border: 12px solid #111;
+          box-shadow: 0 25px 60px rgba(0,0,0,0.4);
+          overflow: hidden;
+          display: flex;
+          flex-direction: column;
+          position: relative;
+        }
+        .mobile-frame::before {
+          content: "";
+          position: absolute;
+          top: 0;
+          left: 50%;
+          transform: translateX(-50%);
+          width: 180px;
+          height: 30px;
+          background: #111;
+          border-bottom-left-radius: 20px;
+          border-bottom-right-radius: 20px;
+        }
+        /* ================= APP CONTAINER ================= */
+        .container {
+          flex: 1;
+          background: var(--card-bg);
+          border-radius: 0;
+          padding: 25px;
+          text-align: center;
+          animation: fadeIn 0.8s ease-in-out;
+          overflow-y: auto;
+        }
+        /* ================= HEADER ================= */
+        .app-header h1 {
+          font-size: 22px;
+          color: var(--primary-color);
+          margin-bottom: 20px;
+          line-height: 1.4;
+        }
+        /* ================= FORM / INPUT SECTION ================= */
+        .input-section {
+          margin-bottom: 20px;
+        }
+        .input-group {
+          text-align: left;
+          margin-bottom: 15px;
+        }
+        .input-group label {
+          font-size: 14px;
+          font-weight: 600;
+          display: block;
+          margin-bottom: 6px;
+          color: var(--text-color);
+        }
+        .input-group select {
+          width: 100%;
+          padding: 12px 14px;
+          border-radius: 10px;
+          border: 2px solid #ccc;
+          font-size: 15px;
+          transition: 0.3s;
+          font-family: 'Georgia', serif; /* Apply font to select element */
+        }
+        .input-group select:focus {
+          border-color: var(--primary-color);
+          box-shadow: 0 0 0 3px rgba(46,125,50,0.3);
+          outline: none;
+        }
+        /* ================= BUTTON ================= */
+        .btn {
+          width: 100%;
+          background: var(--primary-color);
+          color: #fff;
+          padding: 14px;
+          border-radius: 12px;
+          border: none;
+          cursor: pointer;
+          font-size: 16px;
+          font-weight: 600;
+          transition: 0.2s;
+        }
+        .btn:hover { background: #1b5e20; transform: scale(1.03); }
+        .btn:active { transform: scale(0.95); }
+        /* ================= SCHEMES SECTION ================= */
+        .schemes-section {
+          margin-top: 20px;
+          background: var(--background-color);
+          padding: 16px;
+          border-radius: 14px;
+          min-height: 80px;
+          font-size: 15px;
+          color: var(--text-color);
+          animation: fadeInUp 0.6s ease;
+        }
+        .hidden { display: none; }
+        /* ================= ANIMATIONS ================= */
+        @keyframes fadeIn {
+          from { opacity: 0; transform: scale(0.95); }
+          to { opacity: 1; transform: scale(1); }
+        }
+        @keyframes fadeInUp {
+          from { opacity: 0; transform: translateY(20px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
+        /* Floating bubbles background */
+        .background-animation {
+          position: fixed;
+          top: 0; left: 0;
+          width: 100%; height: 100%;
+          z-index: -1;
+          overflow: hidden;
+        }
+        .background-animation::before,
+        .background-animation::after {
+          content: '';
+          position: absolute;
+          width: 300px; height: 300px;
+          border-radius: 50%;
+          background: rgba(255,255,255,0.15);
+          animation: float 10s infinite;
+        }
+        .background-animation::after {
+          width: 200px; height: 200px;
+          top: 20%; left: 70%;
+          animation-duration: 14s;
+        }
+        @keyframes float {
+          0% { transform: translateY(0) translateX(0); }
+          50% { transform: translateY(-40px) translateX(30px); }
+          100% { transform: translateY(0) translateX(0); }
+        }
+        /* Scheme Card */
+        .scheme-card {
+          background: #fff;
+          padding: 12px 14px;
+          margin: 10px 0;
+          border-radius: 10px;
+          box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+          text-align: left;
+        }
+        .scheme-card h3 { margin: 0 0 5px 0; font-size: 16px; }
+        .scheme-card p { margin: 0 0 8px 0; font-size: 14px; }
+        .scheme-card a { color: var(--primary-color); font-weight: 600; text-decoration: none; }
+        .scheme-card a:hover { text-decoration: underline; }
+
+        .loading-message {
+            opacity: 0.7;
+            font-size: 14px;
+            text-align: center;
+            font-family: 'Georgia', serif;
+        }
+    </style>
+</head>
+<body>
+    <div class="background-animation"></div>
+
+    <div class="mobile-frame">
+        <div class="container">
+            <header class="app-header">
+                <h1>🌱 Farmer Schemes</h1>
+            </header>
+
+            <form id="schemesForm">
+                <section class="input-section">
+                    <div class="input-group">
+                        <label for="state-select">Select State</label>
+                        <select name="state" id="state-select">
+                            </select>
+                    </div>
+
+                    <div class="input-group">
+                        <label for="crop-select">Select Crop</label>
+                        <select name="crop" id="crop-select">
+                            </select>
+                    </div>
+
+                    <button type="submit" class="btn">Find Schemes</button>
+                </section>
+            </form>
+
+            <section id="schemes-container" class="schemes-section">
+                <p id="no-schemes-message">Select a state and crop to find relevant schemes.</p>
+            </section>
+        </div>
+    </div>
+
+    <script>
+        const schemesData = {
+          "states": [
+            "Maharashtra",
+            "Uttar Pradesh",
+            "Madhya Pradesh",
+            "Tamil Nadu",
+            "Karnataka",
+            "Punjab",
+            "All States"
+          ],
+          "crops": [
+            "Wheat",
+            "Rice",
+            "Pulses",
+            "Coarse Cereals",
+            "Commercial Crops",
+            "All Crops"
+          ],
+          "schemes": [
+            {
+              "title": "Pradhan Mantri Fasal Bima Yojana (PMFBY)",
+              "description": "Provides crop insurance against all non-preventable natural risks.",
+              "states": ["All States"],
+              "crops": ["All Crops"],
+              "learn_more_link": "https://pmfby.gov.in/"
+            },
+            {
+              "title": "Paramparagat Krishi Vikas Yojana (PKVY)",
+              "description": "Promotes organic farming through cluster-based organic farming.",
+              "states": ["All States"],
+              "crops": ["All Crops"],
+              "learn_more_link": "https://pgsindia-ncof.gov.in/pkvy.aspx"
+            },
+            {
+              "title": "National Mission on Micro Irrigation",
+              "description": "Provides financial assistance for installing drip and sprinkler irrigation systems.",
+              "states": ["All States"],
+              "crops": ["All Crops"],
+              "learn_more_link": "https://pib.gov.in/newsite/PrintRelease.aspx?relid=158782"
+            },
+            {
+              "title": "Rashtriya Krishi Vikas Yojana (RKVY)",
+              "description": "An umbrella scheme to provide flexibility and autonomy to states in planning and executing agriculture-related schemes.",
+              "states": ["All States"],
+              "crops": ["All Crops"],
+              "learn_more_link": "https://rkvy.nic.in/"
+            },
+            {
+              "title": "Mahatma Jyotirao Phule Shetkari Karj Mukti Yojana",
+              "description": "A loan waiver scheme for farmers in Maharashtra.",
+              "states": ["Maharashtra"],
+              "crops": ["All Crops"],
+              "learn_more_link": "https://mahanews.gov.in/mahanews/english/24835.jsp"
+            },
+            {
+              "title": "Punjab State Farmer Scheme",
+              "description": "A scheme providing free power to farmers for agriculture.",
+              "states": ["Punjab"],
+              "crops": ["All Crops"],
+              "learn_more_link": "http://agri.punjab.gov.in/"
+            },
+            {
+              "title": "Karnataka Crop Insurance Scheme",
+              "description": "State-specific crop insurance scheme for farmers in Karnataka.",
+              "states": ["Karnataka"],
+              "crops": ["All Crops"],
+              "learn_more_link": "http://www.raitamitra.kar.nic.in/"
+            },
+            {
+              "title": "Pradhan Mantri Kisan Samman Nidhi (PM-KISAN)",
+              "description": "Provides income support to all eligible farmer families across the country.",
+              "states": ["All States"],
+              "crops": ["All Crops"],
+              "learn_more_link": "https://pmkisan.gov.in/"
+            },
+            {
+              "title": "National Food Security Mission",
+              "description": "Aims to increase the production of rice, wheat, pulses, and coarse cereals.",
+              "states": ["All States"],
+              "crops": ["Wheat", "Rice", "Pulses", "Coarse Cereals"],
+              "learn_more_link": "https://nfsm.gov.in/"
+            }
+          ]
+        };
+
+        // Populate dropdowns on page load
+        document.addEventListener('DOMContentLoaded', () => {
+            const stateSelect = document.getElementById('state-select');
+            const cropSelect = document.getElementById('crop-select');
+
+            schemesData.states.forEach(state => {
+                const option = document.createElement('option');
+                option.value = state;
+                option.textContent = state;
+                stateSelect.appendChild(option);
+            });
+
+            schemesData.crops.forEach(crop => {
+                const option = document.createElement('option');
+                option.value = crop;
+                option.textContent = crop;
+                cropSelect.appendChild(option);
+            });
+        });
+
+        document.getElementById('schemesForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+            const resultsDiv = document.getElementById('schemes-container');
+            resultsDiv.innerHTML = '<p class="loading-message">Searching for schemes...</p>';
+            
+            const selectedState = document.getElementById('state-select').value;
+            const selectedCrop = document.getElementById('crop-select').value;
+            
+            const filteredSchemes = schemesData.schemes.filter(scheme => {
+                const stateMatch = scheme.states.includes(selectedState) || scheme.states.includes("All States");
+                const cropMatch = scheme.crops.includes(selectedCrop) || scheme.crops.includes("All Crops");
+                return stateMatch && cropMatch;
+            });
+
+            resultsDiv.innerHTML = ''; // Clear loading message
+
+            if (filteredSchemes.length > 0) {
+                filteredSchemes.forEach(scheme => {
+                    const schemeDiv = document.createElement('div');
+                    schemeDiv.className = 'scheme-card';
+                    schemeDiv.innerHTML = `<h3>${scheme.title}</h3><p>${scheme.description}</p><a href="${scheme.learn_more_link}" target="_blank">Learn More</a>`;
+                    resultsDiv.appendChild(schemeDiv);
+                });
+            } else {
+                resultsDiv.innerHTML = '<p>No schemes found for your selection.</p>';
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Agrova App - Dashboard</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🌿</text></svg>">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        :root {
+            --primary-green: #298c56;
+            --light-green: #e9faee;
+            --off-white: #FFFFFF;
+            --frame-bg-start: #298c56;
+            --frame-bg-end: #6ec094;
+            --primary-dark: #1f5c3c;
+            --primary-light: #6ec094;
+            --secondary-yellow: #FFD700;
+        }
+
+        /* ================= Base (GEORGIA Applied) ================= */
+        body {
+            /* Changed font-family to Georgia */
+            font-family: 'Georgia', serif;
+            color: var(--primary-dark);
+            overflow: hidden;
+            background: linear-gradient(135deg, #d1e3d6 0%, #e9faee 100%); 
+            background-size: 200% 200%;
+            animation: background-shift 20s infinite alternate;
+        }
+
+        @keyframes background-shift {
+            0% { background-position: 0% 50%; }
+            100% { background-position: 100% 50%; }
+        }
+
+        /* ================= iPhone Frame (Animated Border) ================= */
+        .mobile-frame {
+            width: 430px;
+            height: 932px;
+            background: linear-gradient(to bottom, var(--frame-bg-start), var(--frame-bg-end));
+            border-radius: 50px;
+            border: 10px solid #111;
+            box-shadow: 0 25px 60px rgba(0,0,0,0.4);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            padding: 15px;
+            transition: all 0.5s ease-in-out;
+            animation: pulse-border 5s infinite alternate;
+        }
+
+        @keyframes pulse-border {
+            0% { box-shadow: 0 25px 60px rgba(0,0,0,0.4), inset 0 0 15px rgba(255, 255, 255, 0.1); }
+            100% { box-shadow: 0 30px 70px rgba(0,0,0,0.6), inset 0 0 25px rgba(255, 255, 255, 0.2); }
+        }
+
+        /* ================= App Container ================= */
+        .app-container {
+            padding-bottom: 20px;
+            overflow-y: auto;
+            position: relative;
+            scrollbar-width: none;
+        }
+        .app-container::-webkit-scrollbar {
+            display: none;
+        }
+
+        /* SCROLL INDICATOR ANIMATION */
+        .app-container::-webkit-scrollbar-thumb {
+            background-color: var(--primary-dark);
+            border-radius: 10px;
+            border: 3px solid var(--off-white);
+            animation: scroll-fade 3s infinite alternate;
+        }
+        
+        @keyframes scroll-fade {
+            0% { opacity: 0.3; }
+            100% { opacity: 0.8; }
+        }
+        
+        /* ================= Header (GEORGIA Applied) ================= */
+        .header-title {
+            font-family: 'Georgia', serif;
+            font-size: 2.2rem;
+            font-weight: 700; 
+            text-align: center;
+            color: var(--off-white);
+            text-shadow: 0 0 10px rgba(255,255,255,0.5);
+            animation: glow 2.5s infinite alternate, wiggle 10s infinite alternate; /* Added WIGGLE */
+            letter-spacing: 1px;
+        }
+
+        @keyframes glow {
+            0% { text-shadow: 0 0 5px rgba(255,255,255,0.4); }
+            100% { text-shadow: 0 0 15px rgba(255,255,255,0.8); }
+        }
+        
+        /* Subtle wiggle effect for fun */
+        @keyframes wiggle {
+            0% { transform: rotate(0deg); }
+            50% { transform: rotate(0.3deg) scale(1.0); }
+            100% { transform: rotate(-0.3deg); }
+        }
+
+        .header-subtitle {
+            animation: pulse-light 3s infinite;
+        }
+        @keyframes pulse-light {
+            0% { opacity: 0.8; }
+            50% { opacity: 1; }
+            100% { opacity: 0.8; }
+        }
+
+        /* ================= Cards (Fade-in & Hover) ================= */
+        .dashboard {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 16px;
+            padding: 20px 10px 40px 10px;
+        }
+
+        .card-link {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            border-radius: 20px;
+            background: rgba(255, 255, 255, 0.883); 
+            backdrop-filter: blur(8px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+            cursor: pointer;
+            transition: transform 0.4s cubic-bezier(0.25,0.8,0.25,1), box-shadow 0.4s ease, background 0.4s ease;
+            text-align: center;
+            gap: 12px;
+            font-weight: 700;
+            min-height: 120px;
+            color: var(--primary-dark);
+            text-decoration: none; 
+            opacity: 0; 
+            transform: translateY(20px);
+            animation: fadeInUp 0.8s ease forwards;
+            position: relative; 
+            overflow: hidden; 
+        }
+
+        /* Card Hover Sparkle Effect */
+        .card-link::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(115deg, transparent 40%, rgba(255, 255, 255, 0.2) 50%, transparent 60%);
+            transform: translateX(-100%);
+            transition: transform 0.8s ease;
+            pointer-events: none;
+        }
+
+        .card-link:hover::before {
+            transform: translateX(100%);
+        }
+        
+        .card-icon {
+            font-size: 2.5rem;
+            line-height: 1;
+            transition: transform 0.3s ease-in-out;
+        }
+
+        .card-link:hover .card-icon {
+            transform: scale(1.1) translateY(-5px) rotateZ(3deg); /* More exaggerated hover */
+        }
+
+        .card-link:hover {
+            transform: translateY(-8px) scale(1.03) rotateZ(0.5deg); 
+            box-shadow: 0 20px 50px rgba(0,0,0,0.4), 0 0 0 5px var(--primary-light); /* Added a slight border glow on hover */
+            background: rgba(255, 255, 255, 0.98);
+        }
+
+        /* Staggered Fade-in-Up effect */
+        .dashboard .card-link:nth-child(1) { animation-delay: 0.1s; }
+        .dashboard .card-link:nth-child(2) { animation-delay: 0.2s; }
+        .dashboard .card-link:nth-child(3) { animation-delay: 0.3s; }
+        .dashboard .card-link:nth-child(4) { animation-delay: 0.4s; }
+        .dashboard .card-link:nth-child(5) { animation-delay: 0.5s; }
+        .dashboard .card-link:nth-child(6) { animation-delay: 0.6s; }
+
+        @keyframes fadeInUp {
+            0% { opacity: 0; transform: translateY(20px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+        
+        /* Market Price LIVE Badge */
+        .card-link[data-page="market-page"] {
+            position: relative;
+        }
+        .live-dot {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            width: 12px;
+            height: 12px;
+            background-color: #ff4d4d; /* Bright Red */
+            border-radius: 50%;
+            border: 2px solid var(--off-white);
+            animation: pulse-live 1.5s infinite;
+        }
+        @keyframes pulse-live {
+            0% { box-shadow: 0 0 0 0 rgba(255, 77, 77, 0.7); }
+            70% { box-shadow: 0 0 0 10px rgba(255, 77, 77, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(255, 77, 77, 0); }
+        }
+
+        /* Chatbot Card Unique Style & Animation */
+        .card-link[data-page="chatbot-page"] {
+            background: linear-gradient(145deg, var(--light-green), var(--off-white));
+            border: 3px solid var(--primary-green);
+            animation: fadeInUp 0.8s ease forwards 0.6s, card-bounce 4s infinite ease-in-out; 
+        }
+
+        @keyframes card-bounce {
+            0%, 100% { transform: translateY(0) scale(1.0); }
+            50% { transform: translateY(-5px) scale(1.01); }
+        }
+
+        /* ================= About Section (Smooth Expand/Collapse) ================= */
+        .about-section {
+            padding: 20px;
+            max-height: 0;
+            opacity: 0;
+            overflow: hidden;
+            transition: max-height 0.7s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.5s ease;
+        }
+
+        .about-section.active {
+            max-height: 3000px; 
+            opacity: 1;
+        }
+        
+        .about-card {
+            border: 1px solid rgba(0,0,0,0.05); 
+            padding: 24px; 
+            background: rgba(255, 255, 255, 0.95);
+        }
+        
+        .about-card h3 {
+            font-family: 'Georgia', serif;
+            color: var(--primary-dark);
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.1); /* Subtle shadow for 3D effect */
+        }
+        
+        .about-card ul {
+            padding-left: 20px;
+        }
+        .about-card ul li {
+            list-style-type: '👉'; /* Fun list marker */
+            padding-left: 0.5em;
+        }
+
+        /* Video Shadow Enhancement */
+        .about-video {
+            box-shadow: 0 15px 30px rgba(41, 140, 86, 0.5); /* Green Shadow */
+        }
+
+        /* ================= Buttons (Gradient & Hover) ================= */
+        .button {
+            border-radius: 9999px;
+            padding: 0.8rem 2.5rem; 
+            color: white;
+            font-weight: 700;
+            text-align: center;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            transition: transform 0.3s ease, box-shadow 0.3s ease, background-color 0.3s ease, filter 0.3s ease;
+            letter-spacing: 0.5px;
+            background: linear-gradient(to right, #FFD700, #FFA500); 
+            display: inline-block;
+            border: 2px solid var(--off-white);
+            position: relative;
+            z-index: 10;
+        }
+
+        .button:hover {
+            transform: translateY(-5px) scale(1.05); 
+            box-shadow: 0 12px 30px rgba(255,165,0,0.6); 
+            background: linear-gradient(to right, #FFA500, #FFD700);
+            filter: brightness(1.1); 
+            animation: color-pulse 1s infinite alternate; /* Added pulse to primary button */
+        }
+        
+        @keyframes color-pulse {
+            0% { filter: hue-rotate(0deg); }
+            100% { filter: hue-rotate(10deg); }
+        }
+
+        .button.secondary {
+            background: linear-gradient(to right, #1f5c3c, #298c56);
+            border-color: #d1e3d6;
+        }
+        
+        .button.secondary:hover {
+            transform: translateY(-5px) scale(1.05);
+            box-shadow: 0 12px 30px rgba(41, 140, 86, 0.6); 
+            background: linear-gradient(to right, #298c56, #1f5c3c);
+        }
+
+        /* Responsive Tweaks */
+        @media screen and (max-width: 500px) {
+            .mobile-frame {
+                width: 95%;
+                height: 90vh;
+                padding: 10px;
+            }
+            .dashboard {
+                grid-template-columns: 1fr;
+                gap: 12px;
+            }
+        }
+    </style>
+</head>
+<body class="flex items-center justify-center min-h-screen">
+
+    <div class="mobile-frame">
+        <div class="app-container flex-1 overflow-auto">
+            <header class="text-center my-8">
+                <h1 class="text-4xl text-off-white header-title">👨‍🌾AGROVA</h1>
+                <p class="mt-1 text-sm text-green-200 tracking-wider header-subtitle">Your daily agricultural assistant</p>
+            </header>
+
+            <div id="app-content"> 
+                <div id="dashboard-section" class="px-4 dashboard">
+                    <a href="crop.html" class="card-link" data-page="crop-page">
+                        <div class="card-icon">🌿</div> 
+                        <span>Crop Lifecycle</span>
+                    </a>
+                    <a href="market.html" class="card-link" data-page="market-page">
+                        <div class="card-icon">💰</div>
+                        <span>Market Prices</span>
+                        <div class="live-dot"></div> </a>
+                    <a href="weather.html" class="card-link" data-page="weather-page">
+                        <div class="card-icon">🌤️</div>
+                        <span>Weather Updates</span>
+                    </a>
+                    <a href="pest.html" class="card-link" data-page="pest-page">
+                        <div class="card-icon">🐛</div>
+                        <span>Pest Control</span>
+                    </a>
+                    <a href="schemes.html" class="card-link" data-page="schemes-page">
+                        <div class="card-icon">🌾</div>
+                        <span>Govt Schemes</span>
+                    </a>
+                    <a href="template/chatbot.html" class="card-link" style="grid-column: 1 / -1;" data-page="chatbot-page"> 
+                        <div class="card-icon">💬</div>
+                        <span>Chatbot & Support (Kisan Mitra)</span>
+                    </a>
+                </div>
+
+                <div class="my-6 text-center">
+                    <button id="about-more-button" class="button">
+                        About More
+                    </button>
+                </div>
+
+                <div id="about-section" class="about-section my-6 px-4">
+                    <div class="card about-card !cursor-default !transform-none !shadow-lg bg-white">
+                        <h3 class="title text-center text-xl">More About Agrova (Farmer's Friend)</h3>
+                        <p class="mt-4 text-sm leading-relaxed text-gray-700 text-left">
+                            Welcome to <b>Agrova (Farmer's Friend)</b>, your comprehensive digital assistant for all things agriculture. Our mission is to empower farmers with timely, accurate, and accessible information. This app provides essential tools to help you make informed decisions, optimize crop yields, and manage resources efficiently.
+                        </p>
+                        <div class="mt-4 text-left w-full">
+                            <h4 class="font-bold text-gray-800 mt-4"><b>🌱 Key Features from Kisan Mitra</b></h4>
+                            <ul class="list-none mt-2 text-gray-600 space-y-2 text-sm">
+                                <li><b><u>Ask in Your Language</b></u> – Speak or type questions, get simple answers.</li>
+                                <li><b><u>Weather Alerts</b></u> – Daily forecast & rain warnings.</li>
+                                <li><b><u>Market Prices</b></u> – Live mandi rates to earn more.</li>
+                                <li><b><u>Pest Solutions</b></u> – Click photo → get instant treatment.</li>
+                                <li><b><u>Govt Schemes</b></u> – Latest subsidies & support details.</li>
+                                <li><b><u>Crop Tracker</b></u> – Step-by-step care guide for your crop.</li>
+                            </ul>
+                            <h4 class="mt-4 text-center font-bold text-gray-800">✨ “<b>Kisan Mitra</b> – Your Digital Farming Friend, Always With You.”</h4>
+                        </div>
+                        
+                        <div class="mt-6 w-full text-center">
+                            <h4 class="font-bold text-xl mb-3 text-primary-dark">In-Depth Learning Resources</h4>
+                            <a href="https://www.manage.gov.in/publications/farmerbook.pdf" target="_blank" class="button secondary">
+                                Download Comprehensive Farmer's Handbook (PDF)
+                            </a>
+                            <p class="text-xs text-gray-500 mt-2">Source: MANAGE (National Institute of Agricultural Extension Management)</p>
+                        </div>
+                        
+                        <div class="about-video mt-6 w-full aspect-video rounded-xl overflow-hidden shadow-xl">
+                            <video autoplay muted controls loop width="100%" height="100%">
+                                <source src="Farmmer.mp4" type="video/mp4">
+                                Your browser does not support the video tag.
+                            </video>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const aboutButton = document.getElementById('about-more-button');
+            const aboutSection = document.getElementById('about-section');
+            const appContainer = document.querySelector('.app-container'); // Get the scrolling container
+            
+            // Handle the "About More" button click event (using CSS class for smooth expand)
+            aboutButton.addEventListener('click', () => {
+                const isActive = aboutSection.classList.contains('active');
+                
+                if (!isActive) {
+                    // Show
+                    aboutSection.classList.add('active');
+                    aboutButton.textContent = 'Show Less'; // Change button text
+                    // Scroll to the new content after a slight delay
+                    setTimeout(() => {
+                        // Scroll the *container* to view the *section*
+                        aboutSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    }, 100); 
+                } else {
+                    // Hide
+                    aboutSection.classList.remove('active');
+                    aboutButton.textContent = 'About More'; // Change button text back
+                    // Scroll back to the button smoothly after collapsing
+                    setTimeout(() => {
+                        // Scroll the *container* to view the *button* (Center it for better UX)
+                        aboutButton.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    }, 700); // Delay matches transition time
+                }
+            });
+        });
+    </script>
+</body>
+</html>

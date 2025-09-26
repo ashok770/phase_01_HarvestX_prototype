@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Government Schemes App</title>
+  <style>
+    /* ================= THEME ================= */
+    :root {
+      --primary-color: #2e7d32;
+      --secondary-color: #5d4037;
+      --background-color: #e8f5e9;
+      --header-bg: #2e7d32;
+      --header-text: #fff;
+      --text-color: #333;
+      --card-bg: #fff;
+    }
+
+    /* ================= BODY ================= */
+    body {
+      background: linear-gradient(135deg, #c8e6c9, #a5d6a7);
+      font-family: 'Montserrat', sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      margin: 0;
+      overflow: hidden;
+    }
+
+    /* ================= iPHONE 16 PRO MAX FRAME ================= */
+    .mobile-frame {
+      width: 430px;
+      height: 932px;
+      background: #fff;
+      border-radius: 50px;
+      border: 12px solid #111;
+      box-shadow: 0 25px 60px rgba(0,0,0,0.4);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+    }
+
+    .mobile-frame::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 180px;
+      height: 30px;
+      background: #111;
+      border-bottom-left-radius: 20px;
+      border-bottom-right-radius: 20px;
+    }
+
+    /* ================= APP CONTAINER ================= */
+    .container {
+      flex: 1;
+      background: var(--card-bg);
+      border-radius: 0;
+      padding: 25px;
+      text-align: center;
+      animation: fadeIn 0.8s ease-in-out;
+      overflow-y: auto;
+    }
+
+    /* ================= HEADER ================= */
+    .app-header h1 {
+      font-size: 22px;
+      color: var(--primary-color);
+      margin-bottom: 20px;
+      line-height: 1.4;
+    }
+
+    /* ================= FORM / INPUT SECTION ================= */
+    .input-section {
+      margin-bottom: 20px;
+    }
+
+    .input-group {
+      text-align: left;
+      margin-bottom: 15px;
+    }
+
+    .input-group label {
+      font-size: 14px;
+      font-weight: 600;
+      display: block;
+      margin-bottom: 6px;
+      color: var(--text-color);
+    }
+
+    .input-group select {
+      width: 100%;
+      padding: 12px 14px;
+      border-radius: 10px;
+      border: 2px solid #ccc;
+      font-size: 15px;
+      transition: 0.3s;
+    }
+
+    .input-group select:focus {
+      border-color: var(--primary-color);
+      box-shadow: 0 0 0 3px rgba(46,125,50,0.3);
+      outline: none;
+    }
+
+    /* ================= BUTTON ================= */
+    .btn {
+      width: 100%;
+      background: var(--primary-color);
+      color: #fff;
+      padding: 14px;
+      border-radius: 12px;
+      border: none;
+      cursor: pointer;
+      font-size: 16px;
+      font-weight: 600;
+      transition: 0.2s;
+    }
+    .btn:hover { background: #1b5e20; transform: scale(1.03); }
+    .btn:active { transform: scale(0.95); }
+
+    /* ================= SCHEMES SECTION ================= */
+    .schemes-section {
+      margin-top: 20px;
+      background: var(--background-color);
+      padding: 16px;
+      border-radius: 14px;
+      min-height: 80px;
+      font-size: 15px;
+      color: var(--text-color);
+      animation: fadeInUp 0.6s ease;
+    }
+
+    .hidden { display: none; }
+
+    /* ================= ANIMATIONS ================= */
+    @keyframes fadeIn {
+      from { opacity: 0; transform: scale(0.95); }
+      to { opacity: 1; transform: scale(1); }
+    }
+
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Floating bubbles background */
+    .background-animation {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      z-index: -1;
+      overflow: hidden;
+    }
+    .background-animation::before,
+    .background-animation::after {
+      content: '';
+      position: absolute;
+      width: 300px; height: 300px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.15);
+      animation: float 10s infinite;
+    }
+    .background-animation::after {
+      width: 200px; height: 200px;
+      top: 20%; left: 70%;
+      animation-duration: 14s;
+    }
+
+    @keyframes float {
+      0% { transform: translateY(0) translateX(0); }
+      50% { transform: translateY(-40px) translateX(30px); }
+      100% { transform: translateY(0) translateX(0); }
+    }
+
+    /* Scheme Card */
+    .scheme-card {
+      background: #fff;
+      padding: 12px 14px;
+      margin: 10px 0;
+      border-radius: 10px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+      text-align: left;
+    }
+    .scheme-card h3 { margin: 0 0 5px 0; font-size: 16px; }
+    .scheme-card p { margin: 0 0 8px 0; font-size: 14px; }
+    .scheme-card a { color: var(--primary-color); font-weight: 600; text-decoration: none; }
+    .scheme-card a:hover { text-decoration: underline; }
+  </style>
+</head>
+<body>
+  <!-- Floating background bubbles -->
+  <div class="background-animation"></div>
+
+  <!-- iPhone 16 Pro Max Frame -->
+  <div class="mobile-frame">
+    <!-- App Container -->
+    <div class="container">
+      <header class="app-header">
+        <h1>🌱 Farmer Schemes</h1>
+      </header>
+
+      <!-- Input Section -->
+      <section class="input-section">
+        <div class="input-group">
+          <label for="state-select">Select State</label>
+          <select id="state-select">
+            <option value="Maharashtra">Maharashtra</option>
+            <option value="Uttar Pradesh">Uttar Pradesh</option>
+            <option value="Madhya Pradesh">Madhya Pradesh</option>
+            <option value="Tamil Nadu">Tamil Nadu</option>
+            <option value="Karnataka">Karnataka</option>
+            <option value="Punjab">Punjab</option>
+            <option value="All States">All States</option>
+          </select>
+        </div>
+
+        <div class="input-group">
+          <label for="crop-select">Select Crop</label>
+          <select id="crop-select">
+            <option value="Wheat">Wheat</option>
+            <option value="Rice">Rice</option>
+            <option value="Pulses">Pulses</option>
+            <option value="Coarse Cereals">Coarse Cereals</option>
+            <option value="Commercial Crops">Commercial Crops</option>
+          </select>
+        </div>
+
+        <button id="find-btn" class="btn">Find Schemes</button>
+      </section>
+
+      <!-- Schemes Section -->
+      <section id="schemes-container" class="schemes-section hidden">
+        <p id="no-schemes-message" class="hidden">No schemes found for the selected criteria.</p>
+      </section>
+    </div>
+  </div>
+
+  <script>
+    const allSchemes = [
+      { name: "Pradhan Mantri Fasal Bima Yojana (PMFBY)", description: "Provides crop insurance against all non-preventable natural risks.", state: "All States", crops: ["Wheat","Rice","Pulses","Coarse Cereals","Commercial Crops"] },
+      { name: "Paramparagat Krishi Vikas Yojana (PKVY)", description: "Promotes organic farming through cluster-based organic farming.", state: "All States", crops: ["All Crops"] },
+      { name: "National Mission on Micro Irrigation", description: "Provides financial assistance for installing drip and sprinkler irrigation systems.", state: "All States", crops: ["All Crops"] },
+      { name: "National Food Security Mission", description: "Aims to increase the production of rice, wheat, pulses, coarse cereals, and commercial crops.", state: "All States", crops: ["Rice","Wheat","Pulses","Coarse Cereals","Commercial Crops"] },
+      { name: "Rashtriya Krishi Vikas Yojana (RKVY)", description: "An umbrella scheme to provide flexibility and autonomy to states in planning and executing agriculture-related schemes.", state: "All States", crops: ["All Crops"] },
+      { name: "Mahatma Jyotirao Phule Shetkari Karj Mukti Yojana", description: "A loan waiver scheme for farmers in Maharashtra.", state: "Maharashtra", crops: ["All Crops"] }
+    ];
+
+    function findSchemes() {
+      const state = document.getElementById("state-select").value;
+      const crop = document.getElementById("crop-select").value;
+      const schemesContainer = document.getElementById("schemes-container");
+      const noSchemesMessage = document.getElementById("no-schemes-message");
+
+      schemesContainer.innerHTML = "";
+      schemesContainer.classList.remove("hidden");
+
+      const filteredSchemes = allSchemes.filter(scheme => {
+        const stateMatch = scheme.state === "All States" || scheme.state === state;
+        const cropMatch = scheme.crops.includes("All Crops") || scheme.crops.includes(crop);
+        return stateMatch && cropMatch;
+      });
+
+      if (filteredSchemes.length === 0) {
+        noSchemesMessage.classList.remove("hidden");
+      } else {
+        noSchemesMessage.classList.add("hidden");
+        filteredSchemes.forEach(scheme => {
+          const schemeDiv = document.createElement("div");
+          schemeDiv.className = "scheme-card";
+          schemeDiv.innerHTML = `<h3>${scheme.name}</h3><p>${scheme.description}</p><a href="#">Learn More</a>`;
+          schemesContainer.appendChild(schemeDiv);
+        });
+      }
+    }
+
+    document.getElementById("find-btn").addEventListener("click", findSchemes);
+  </script>
+</body>
+</html>

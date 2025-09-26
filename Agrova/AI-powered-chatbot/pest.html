@@ -1,0 +1,563 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Pest Management App</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* ================= THEME ================= */
+        :root {
+            --primary-color: #2e7d32;
+            --secondary-color: #43a047;
+            --background-color: #c8e6c9;
+            --header-bg: #43a047;
+            --header-text: #fff;
+            --text-color: #333;
+            --card-bg: #e8f5e9;
+        }
+        
+        /* ================= BODY ================= */
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Montserrat', sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #c8e6c9, #a5d6a7);
+            overflow: hidden;
+        }
+
+        /* ================= iPHONE 16 PRO MAX FRAME ================= */
+        .mobile-frame {
+            width: 430px;
+            height: 932px;
+            background: #fff;
+            border-radius: 50px;
+            border: 12px solid #111;
+            box-shadow: 0 25px 60px rgba(0, 0, 0, 0.4);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+        }
+
+        /* Notch */
+        .mobile-frame::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 180px;
+            height: 30px;
+            background: #111;
+            border-bottom-left-radius: 20px;
+            border-bottom-right-radius: 20px;
+        }
+
+        /* ================= APP CONTAINER ================= */
+        .container {
+            flex: 1;
+            padding: 25px;
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto;
+            background: var(--card-bg);
+            animation: fadeIn 0.8s ease-in-out;
+        }
+        
+        /* ================= MODULES ================= */
+        .module-card {
+            background: var(--background-color);
+            padding: 20px;
+            border-radius: 20px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+        }
+        
+        .module-card h2 {
+            font-size: 20px;
+            color: var(--primary-color);
+            margin-top: 0;
+            text-align: center;
+        }
+
+        .file-input-wrapper {
+            position: relative;
+            overflow: hidden;
+            display: inline-block;
+            width: 100%;
+        }
+
+        input[type="file"] {
+            font-size: 100px;
+            position: absolute;
+            left: 0;
+            top: 0;
+            opacity: 0;
+            cursor: pointer;
+        }
+
+        .btn-upload {
+            width: 100%;
+            padding: 12px 16px;
+            border-radius: 12px;
+            background-color: var(--primary-color);
+            color: white;
+            font-weight: 600;
+            text-align: center;
+            transition: 0.2s;
+            display: block;
+            cursor: pointer;
+        }
+
+        .btn-upload:hover {
+            background-color: #1b5e20;
+        }
+        
+        .btn-upload.loading {
+            background-color: #6d6d6d;
+            cursor: not-allowed;
+        }
+
+        .image-preview {
+            width: 100%;
+            height: auto;
+            border-radius: 12px;
+            margin-top: 15px;
+            display: none;
+        }
+
+        .input-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        #user-input {
+            flex-grow: 1;
+            padding: 10px;
+            border-radius: 10px;
+            border: 2px solid #ccc;
+        }
+
+        .btn-send, .btn-voice {
+            padding: 10px 15px;
+            border-radius: 10px;
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 1.2em;
+        }
+
+        .btn-send:hover, .btn-voice:hover {
+            background-color: #1b5e20;
+        }
+
+        .btn-voice.listening {
+            background-color: #d32f2f;
+        }
+        
+        .pest-results {
+            min-height: 100px;
+            background: white;
+            border-radius: 12px;
+            padding: 15px;
+            margin-top: 15px;
+            line-height: 1.6;
+            transition: opacity 0.5s ease-in-out;
+            opacity: 0;
+        }
+        
+        .pest-results h3 {
+            margin-top: 0;
+            font-size: 16px;
+            color: var(--primary-color);
+            text-align: center;
+        }
+        
+        .pest-results p {
+            font-size: 14px;
+            color: var(--text-color);
+        }
+
+        .diagnosis-text {
+            color: #2e7d32;
+            font-weight: 600;
+        }
+
+        .solution-text {
+            color: #4caf50;
+            font-weight: 600;
+        }
+
+        /* Message Box for errors */
+        .message-box {
+            background-color: #f44336;
+            color: white;
+            padding: 15px;
+            border-radius: 10px;
+            text-align: center;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 10;
+            display: none;
+        }
+
+        /* Typing indicator */
+        .typing-indicator {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .typing-indicator span {
+            height: 10px;
+            width: 10px;
+            margin: 0 4px;
+            background-color: var(--primary-color);
+            border-radius: 50%;
+            display: inline-block;
+            animation: bounce 1.4s infinite ease-in-out both;
+        }
+        .typing-indicator span:nth-child(2) {
+            animation-delay: -0.2s;
+        }
+        .typing-indicator span:nth-child(3) {
+            animation-delay: -0.4s;
+        }
+        @keyframes bounce {
+            0%, 80%, 100% {
+                transform: translateY(0);
+            }
+            40% {
+                transform: translateY(-10px);
+            }
+        }
+
+        /* ================= ANIMATIONS ================= */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: scale(0.95);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+        
+        /* Floating bubbles background */
+        .background-animation {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            overflow: hidden;
+        }
+        .background-animation::before,
+        .background-animation::after {
+            content: '';
+            position: absolute;
+            width: 300px;
+            height: 300px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.15);
+            animation: float 10s infinite;
+        }
+        .background-animation::after {
+            width: 200px;
+            height: 200px;
+            top: 20%;
+            left: 70%;
+            animation-duration: 14s;
+        }
+        @keyframes float {
+            0% {
+                transform: translateY(0) translateX(0);
+            }
+            50% {
+                transform: translateY(-40px) translateX(30px);
+            }
+            100% {
+                transform: translateY(0) translateX(0);
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Floating background bubbles -->
+    <div class="background-animation"></div>
+
+    <!-- iPhone 16 Pro Max Frame -->
+    <div class="mobile-frame">
+        <div class="container">
+            <!-- Header -->
+            <header class="module-card" style="box-shadow: none;">
+                <h2>Pest Management</h2>
+            </header>
+
+            <!-- Pest Management Module -->
+            <div class="module-card">
+                <div class="file-input-wrapper">
+                    <input type="file" id="pest-image-input" accept="image/*">
+                    <div class="btn-upload">Upload Crop Image</div>
+                </div>
+                <img id="image-preview" class="image-preview" src="#" alt="Image Preview">
+                <div class="input-group">
+                    <input type="text" id="user-input" placeholder="Ask a question about your crop...">
+                    <button class="btn-send">Send</button>
+                    <button class="btn-voice" id="voice-input-btn">
+                        <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 0 24 24" width="24px" fill="#FFFFFF">
+                            <path d="M0 0h24v24H0V0z" fill="none"/>
+                            <path d="M12 14c1.66 0 2.99-1.34 2.99-3L15 5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3zm5.3-3c0 3.53-2.65 6.43-6.19 6.92V21h3v2h-7v-2h3v-3.08C6.35 17.43 3.7 14.53 3.7 11H5c0 3.03 2.47 5.5 5.5 5.5s5.5-2.47 5.5-5.5h-1.2z"/>
+                        </svg>
+                    </button>
+                </div>
+                <div class="pest-results" id="pest-results">
+                    <p class="initial-message">Upload an image of your crop to check for diseases and ask questions.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Custom message box for errors -->
+    <div id="message-box" class="message-box"></div>
+
+    <script>
+        const apiKey = "AIzaSyD3-ipJoRXje1loMy7qWYn8KHOi-CX6dxA";
+        const pestImageInput = document.getElementById("pest-image-input");
+        const imagePreview = document.getElementById("image-preview");
+        const pestResults = document.getElementById("pest-results");
+        const messageBox = document.getElementById("message-box");
+        const uploadButton = document.querySelector('.btn-upload');
+        const userInput = document.getElementById('user-input');
+        const sendButton = document.querySelector('.btn-send');
+        const voiceInputBtn = document.getElementById('voice-input-btn');
+        let isListening = false;
+        
+        let uploadedImageData = null;
+        let uploadedMimeType = null;
+        
+        /**
+         * Shows a custom message box instead of an alert.
+         * @param {string} message The message to display.
+         */
+        function showMessage(message) {
+            messageBox.textContent = message;
+            messageBox.style.display = 'block';
+            setTimeout(() => {
+                messageBox.style.display = 'none';
+            }, 3000);
+        }
+        
+        /**
+         * Sets the loading state of the button.
+         * @param {boolean} isLoading True to show loading state, false otherwise.
+         */
+        function setLoadingState(isLoading) {
+            if (isLoading) {
+                uploadButton.classList.add('loading');
+                uploadButton.textContent = 'Analyzing...';
+                sendButton.disabled = true;
+                voiceInputBtn.disabled = true;
+            } else {
+                uploadButton.classList.remove('loading');
+                uploadButton.textContent = 'Upload Crop Image';
+                sendButton.disabled = false;
+                voiceInputBtn.disabled = false;
+            }
+        }
+
+        // Event listener for image file selection
+        pestImageInput.addEventListener('change', (event) => {
+            const file = event.target.files[0];
+            if (!file) {
+                imagePreview.style.display = 'none';
+                return;
+            }
+
+            // Display image preview
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                imagePreview.src = e.target.result;
+                imagePreview.style.display = 'block';
+                uploadedImageData = e.target.result.split(',')[1];
+                uploadedMimeType = file.type;
+                
+                // Automatically send a query after uploading an image
+                const defaultQuery = "Analyze the provided image of a crop and identify any disease or pest. Provide a short explanation of the diagnosis and a clear solution. If the crop appears healthy, respond with 'Crop appears healthy.'";
+                sendQueryToAI(defaultQuery);
+
+            };
+            reader.readAsDataURL(file);
+        });
+
+        // Event listener for sending a query
+        sendButton.addEventListener('click', () => {
+            const userQuery = userInput.value.trim();
+            if (uploadedImageData && userQuery) {
+                sendQueryToAI(userQuery);
+            } else if (!uploadedImageData) {
+                showMessage("Please upload an image first.");
+            } else {
+                sendQueryToAI("Analyze the image and provide a diagnosis and solution for any disease or pest.");
+            }
+        });
+        
+        userInput.addEventListener('keydown', (event) => {
+            if (event.key === 'Enter') {
+                event.preventDefault(); // Prevent form submission
+                sendButton.click();
+            }
+        });
+
+        // Check for Web Speech API support
+        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+        if (SpeechRecognition) {
+            const recognition = new SpeechRecognition();
+            recognition.continuous = false; // Stop after first utterance
+            recognition.lang = 'en-US'; // Set default language, can be changed to 'hi-IN'
+
+            voiceInputBtn.addEventListener('click', () => {
+                if (uploadedImageData && !isListening) {
+                    recognition.start();
+                } else if (!uploadedImageData) {
+                    showMessage("Please upload an image first.");
+                } else {
+                    showMessage("Speech recognition is already active.");
+                }
+            });
+
+            recognition.onstart = () => {
+                isListening = true;
+                voiceInputBtn.classList.add('listening');
+                userInput.placeholder = "Listening...";
+            };
+
+            recognition.onresult = (event) => {
+                const transcript = event.results[0][0].transcript;
+                userInput.value = transcript;
+                voiceInputBtn.classList.remove('listening');
+                userInput.placeholder = "Ask a question about your crop...";
+                // Optional: Automatically send the query after recognition
+                // sendButton.click();
+            };
+
+            recognition.onend = () => {
+                isListening = false;
+                voiceInputBtn.classList.remove('listening');
+                userInput.placeholder = "Ask a question about your crop...";
+            };
+
+            recognition.onerror = (event) => {
+                isListening = false;
+                voiceInputBtn.classList.remove('listening');
+                userInput.placeholder = "Ask a question about your crop...";
+                console.error("Speech recognition error:", event.error);
+                if (event.error !== 'no-speech') {
+                    showMessage("Voice input failed. Please try again.");
+                }
+            };
+        } else {
+            voiceInputBtn.style.display = 'none';
+            console.warn("Web Speech API is not supported in this browser.");
+        }
+
+        async function sendQueryToAI(query) {
+            setLoadingState(true);
+            pestResults.style.opacity = 0;
+            pestResults.innerHTML = `
+                <h3>Thinking...</h3>
+                <div class="typing-indicator">
+                    <span></span><span></span><span></span>
+                </div>
+            `;
+            pestResults.style.opacity = 1;
+
+            const prompt = `Analyze the provided image of a crop and respond to the user's question. User's question: "${query}"`;
+
+            const payload = {
+                contents: [{
+                    parts: [
+                        { text: prompt },
+                        { inlineData: { mimeType: uploadedMimeType, data: uploadedImageData } }
+                    ]
+                }],
+                generationConfig: {
+                    temperature: 0.1,
+                }
+            };
+
+            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-05-20:generateContent?key=${apiKey}`;
+
+            let retries = 0;
+            const maxRetries = 3;
+            const delay = (ms) => new Promise(res => setTimeout(res, ms));
+
+            while (retries < maxRetries) {
+                try {
+                    const response = await fetch(apiUrl, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(payload)
+                    });
+
+                    if (response.status === 429) {
+                        retries++;
+                        await delay(Math.pow(2, retries) * 1000);
+                        continue;
+                    }
+
+                    if (!response.ok) {
+                        throw new Error(`API call failed with status: ${response.status}`);
+                    }
+
+                    const result = await response.json();
+                    const text = result?.candidates?.[0]?.content?.parts?.[0]?.text || "No analysis could be provided.";
+                    
+                    const diagnosisMatch = text.match(/Diagnosis:\s*(.*?)(?=\s*Solution:|$)/i);
+                    const solutionMatch = text.match(/Solution:\s*(.*)/i);
+
+                    if (diagnosisMatch && solutionMatch) {
+                        const diagnosis = diagnosisMatch[1].trim();
+                        const solution = solutionMatch[1].trim();
+
+                        pestResults.innerHTML = `
+                            <h3>Analysis Results:</h3>
+                            <p><span class="diagnosis-text">Diagnosis:</span> ${diagnosis}</p>
+                            <p><span class="solution-text">Solution:</span> ${solution}</p>
+                        `;
+                    } else {
+                        pestResults.innerHTML = `<h3>Analysis Results:</h3><p>${text}</p>`;
+                    }
+
+                    pestResults.style.opacity = 1;
+                    return;
+
+                } catch (error) {
+                    console.error("Error with Gemini API:", error);
+                    retries++;
+                    if (retries >= maxRetries) {
+                        pestResults.innerHTML = `<h3>Analysis Results:</h3><p>Sorry, an error occurred. Please try again later.</p>`;
+                        pestResults.style.opacity = 1;
+                        showMessage("Failed to connect to the API. Please check your internet connection and try again.");
+                    }
+                } finally {
+                    setLoadingState(false);
+                }
+            }
+        }
+    </script>
+</body>
+</html>

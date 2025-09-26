@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, maximum-scale=1.0, user-scalable=no">
+    <title>Welcome to Agrova</title>
+    <style>
+        /* ================= THEME ================= */
+        :root {
+            --primary-color: #2e7d32;
+            --secondary-color: #43a047;
+            --background-gradient: linear-gradient(135deg, #c8e6c9, #a5d6a7, #81c784, #66bb6a);
+            --header-text: #fff;
+            --text-color: #333;
+            --card-bg: #f9fff9;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Poppins', sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background: var(--background-gradient);
+            background-size: 400% 400%;
+            animation: bgMove 12s ease infinite;
+            overflow: hidden;
+        }
+
+        /* ================= iPHONE 16 PRO MAX FRAME ================= */
+        .mobile-frame {
+            width: 430px;
+            height: 932px;
+            background: #fff;
+            border-radius: 50px;
+            border: 12px solid #111;
+            box-shadow: 0 25px 80px rgba(0, 0, 0, 0.6);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            text-align: center;
+            animation: bounceIn 1.2s ease-out, floatTilt 6s infinite ease-in-out;
+        }
+
+        /* Glow around frame */
+        .mobile-frame::after {
+            content: "";
+            position: absolute;
+            top: -20px;
+            left: -20px;
+            right: -20px;
+            bottom: -20px;
+            border-radius: 60px;
+            background: radial-gradient(circle, rgba(67,160,71,0.3), transparent 70%);
+            z-index: -1;
+            animation: glowPulse 3s infinite ease-in-out;
+        }
+
+        /* Notch */
+        .mobile-frame::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 180px;
+            height: 30px;
+            background: #111;
+            border-bottom-left-radius: 20px;
+            border-bottom-right-radius: 20px;
+        }
+
+        /* ================= APP CONTAINER ================= */
+        .container {
+            flex: 1;
+            padding: 30px 20px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            background: radial-gradient(circle at center, #f9fff9 0%, #e8f5e9 100%);
+            animation: fadeIn 1.5s ease-in-out;
+            position: relative;
+            align-items: center;
+        }
+
+        h1 {
+            font-family: 'Pacifico', cursive;
+            color: var(--primary-color);
+            font-size: 2.5em;
+            margin-bottom: 0.5em;
+            opacity: 0; /* Initially hidden for animation */
+        }
+        
+        #dynamic-text {
+            font-size: 1.2em;
+            color: var(--text-color);
+            margin-bottom: 1.8em;
+            line-height: 1.6;
+            opacity: 0; /* Initially hidden for animation */
+        }
+        
+        .fade-in-up {
+            animation: fadeInUp 1s ease-in-out forwards;
+        }
+
+        /* ================= LOGO STYLING ================= */
+        .app-logo {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            border: 4px solid var(--primary-color);
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2), 0 0 20px rgba(67, 160, 71, 0.4);
+            margin-bottom: 2em;
+            animation: popIn 1s cubic-bezier(0.68, -0.55, 0.27, 1.55), float 4s ease-in-out infinite;
+        }
+
+        .start-button {
+            padding: 15px 35px;
+            margin-top: 20px;
+            background: linear-gradient(90deg, #2e7d32, #43a047, #66bb6a);
+            background-size: 200% 200%;
+            color: white;
+            font-size: 1.3em;
+            font-weight: bold;
+            border-radius: 15px;
+            text-decoration: none;
+            box-shadow: 0 0 20px rgba(67, 160, 71, 0.6);
+            animation: gradientMove 4s infinite alternate, fadeIn 2.2s ease;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .start-button:hover {
+            transform: scale(1.1);
+            box-shadow: 0 0 40px rgba(67, 160, 71, 0.9);
+        }
+
+        /* Animated Leaf Graphics */
+        .animated-leaf {
+            position: absolute;
+            background: rgba(67, 160, 71, 0.2);
+            border-radius: 50% 0 50% 50%;
+            z-index: 1;
+            transform-origin: 50% 50%;
+        }
+
+        .leaf-1 {
+            width: 60px;
+            height: 60px;
+            top: 20%;
+            left: 15%;
+            animation: floatAndRotate 10s infinite linear, fall 12s infinite linear;
+        }
+
+        .leaf-2 {
+            width: 45px;
+            height: 45px;
+            top: 40%;
+            left: 80%;
+            animation: floatAndRotate 12s infinite linear reverse, fall 10s infinite linear 2s;
+        }
+
+        .leaf-3 {
+            width: 70px;
+            height: 70px;
+            top: 60%;
+            left: 40%;
+            animation: floatAndRotate 8s infinite linear, fall 14s infinite linear 4s;
+        }
+
+        .leaf-4 {
+            width: 55px;
+            height: 55px;
+            top: 80%;
+            left: 25%;
+            animation: floatAndRotate 9s infinite linear reverse, fall 11s infinite linear 3s;
+        }
+
+        /* ================= ANIMATIONS ================= */
+        @keyframes bgMove {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        @keyframes bounceIn {
+            0% { transform: scale(0.7) translateY(80px); opacity: 0; }
+            60% { transform: scale(1.05) translateY(-15px); opacity: 1; }
+            100% { transform: scale(1) translateY(0); }
+        }
+
+        @keyframes glowPulse {
+            0%, 100% { box-shadow: 0 0 40px rgba(67,160,71,0.4); }
+            50% { box-shadow: 0 0 80px rgba(67,160,71,0.8); }
+        }
+
+        @keyframes floatTilt {
+            0% { transform: rotate(0deg) translateY(0); }
+            50% { transform: rotate(1.2deg) translateY(-10px); }
+            100% { transform: rotate(0deg) translateY(0); }
+        }
+
+        @keyframes gradientMove {
+            0% { background-position: 0% 50%; }
+            100% { background-position: 100% 50%; }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes slideInDown {
+            0% { transform: translateY(-50px); opacity: 0; }
+            100% { transform: translateY(0); opacity: 1; }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        @keyframes popIn {
+            0% { transform: scale(0.5); opacity: 0; }
+            80% { transform: scale(1.1); opacity: 1; }
+            100% { transform: scale(1); }
+        }
+        
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+            100% { transform: translateY(0px); }
+        }
+
+        @keyframes floatAndRotate {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        @keyframes fall {
+            0% { transform: translateY(0); }
+            100% { transform: translateY(100vh); }
+        }
+
+    </style>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&family=Pacifico&display=swap" rel="stylesheet">
+</head>
+<body>
+
+    <!-- iPhone styled frame -->
+    <div class="mobile-frame">
+        <div class="container">
+            <!-- App Logo -->
+            <img src="logo.png" alt="Agrova Logo" class="app-logo">
+            
+            <!-- Dynamic header text will be inserted here -->
+            <h1 id="dynamic-header"></h1>
+            <!-- Dynamic paragraph text will be inserted here -->
+            <p id="dynamic-text"></p>
+            <a href="mainpage.html" class="start-button">🚀 START NOW</a>
+
+            <!-- Animated leaf graphics -->
+            <div class="animated-leaf leaf-1"></div>
+            <div class="animated-leaf leaf-2"></div>
+            <div class="animated-leaf leaf-3"></div>
+            <div class="animated-leaf leaf-4"></div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const dynamicHeaderElement = document.getElementById('dynamic-header');
+            const dynamicTextElement = document.getElementById('dynamic-text');
+
+            const headerMessages = [
+                "Namaste Farmer 🙏 Welcome to Agrova 🌱", // English
+                "नमस्ते किसान 🙏 एग्रोवा में आपका स्वागत है", // Hindi
+                "வணக்கம் விவசாயி 🙏 அக்ரோவாவுக்கு வருக", // Tamil
+                "നമസ്കാരം കർഷകനേ 🙏 അഗ്രോവയിലേക്ക് സ്വാഗതം", // Malayalam
+                "नमस्ते कृषक 🙏 एग्रोभामा स्वागत छ", // Nepali
+                "नमस्कार शेतकरी 🙏 एग्रोवामध्ये आपले स्वागत आहे", // Marathi
+            ];
+
+            const paragraphMessages = [
+                "Empowering you with smart solutions. Start your journey towards modern agriculture today.", // English
+                "स्मार्ट समाधानों के साथ आपको सशक्त बनाना। आधुनिक कृषि की ओर अपनी यात्रा शुरू करें।", // Hindi
+                "ஸ்மார்ட் தீர்வுகளுடன் உங்களை மேம்படுத்துகிறது. நவீன விவசாயத்தை நோக்கி உங்கள் பயணத்தைத் தொடங்குங்கள்.", // Tamil
+                "സ്മാർട്ട് സൊല്യൂഷനുകൾ ഉപയോഗിച്ച് നിങ്ങളെ ശാക്തീകരിക്കുക. ആധുനിക കൃഷിയിലേക്കുള്ള നിങ്ങളുടെ യാത്ര ആരംഭിക്കുക.", // Malayalam
+                "स्मार्ट समाधानको साथ तपाईंलाई सशक्त बनाउँदै। आधुनिक कृषितर्फको आफ्नो यात्रा सुरु गर्नुहोस्।", // Nepali
+                "स्मार्ट सोल्यूशन्ससह तुम्हाला सशक्त बनवत आहे. आधुनिक शेतीकडे आपला प्रवास सुरू करा.", // Marathi
+            ];
+
+            let currentIndex = 0;
+
+            function updateText() {
+                // Clear existing text to re-trigger the animation
+                dynamicHeaderElement.textContent = '';
+                dynamicTextElement.textContent = '';
+                
+                // Add the new text and trigger the animation for both elements
+                setTimeout(() => {
+                    dynamicHeaderElement.textContent = headerMessages[currentIndex];
+                    dynamicTextElement.textContent = paragraphMessages[currentIndex];
+                    
+                    dynamicHeaderElement.classList.remove('fade-in-up');
+                    dynamicTextElement.classList.remove('fade-in-up');
+                    
+                    // Force a reflow to re-run the animation
+                    void dynamicHeaderElement.offsetWidth;
+                    void dynamicTextElement.offsetWidth;
+
+                    dynamicHeaderElement.classList.add('fade-in-up');
+                    dynamicTextElement.classList.add('fade-in-up');
+                    
+                    currentIndex = (currentIndex + 1) % headerMessages.length;
+                }, 100); // Small delay to ensure the class is removed and re-added correctly
+            }
+
+            // Initial call to display the first message
+            updateText();
+
+            // Set an interval to loop through the messages
+            setInterval(updateText, 5000);
+        });
+    </script>
+
+</body>
+</html>

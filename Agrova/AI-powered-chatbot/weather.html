@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Weather App</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg1: #d3eafc;
+            --bg2: #f0f8ff;
+            --accent: #00d4ff;
+            --card: rgba(255, 255, 255, 0.06);
+            --glass: rgba(255, 255, 255, 0.06);
+            --glass-strong: rgba(255, 255, 255, 0.08);
+            --muted: rgba(255, 255, 255, 0.75);
+            --green: #4caf50;
+            --red: #f44336;
+            --blue-1: #00d4ff;
+            --blue-2: #00a4d1;
+        }
+
+        html, body {
+            height: 100%;
+        }
+
+        body {
+            margin: 0;
+            font-family: 'Inter', ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+            background: linear-gradient(135deg, var(--bg1), var(--bg2));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #333;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        .mobile-frame {
+            width: 430px;
+            height: 932px;
+            background: #e1f5fe; /* Light blue from image */
+            border-radius: 50px;
+            border: 12px solid #111;
+            box-shadow: 0 25px 60px rgba(0, 0, 0, 0.4);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+        }
+
+        .mobile-frame::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 180px;
+            height: 30px;
+            background: #111;
+            border-bottom-left-radius: 20px;
+            border-bottom-right-radius: 20px;
+        }
+
+        .container {
+            flex: 1;
+            padding: 25px;
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto;
+            background: var(--bg2);
+            animation: fadeIn 0.8s ease-in-out;
+            color: #333;
+        }
+        
+        .panel {
+            background: #fff;
+            border-radius: 18px;
+            padding: 26px;
+            box-shadow: 0 10px 30px rgba(2, 6, 23, 0.1);
+            border: 1px solid rgba(0,0,0,0.05);
+            margin-bottom: 20px;
+        }
+
+        h1 {
+            margin: 0 0 6px 0;
+            font-size: 20px;
+            letter-spacing: 0.2px;
+            color: var(--blue-2);
+        }
+
+        p.lead {
+            margin: 0 0 18px 0;
+            color: #666;
+            font-size: 13px;
+        }
+        
+        .search-container {
+            display: flex;
+            gap: 10px;
+        }
+
+        .search-container input {
+            flex: 1;
+            padding: 12px 14px;
+            border-radius: 12px;
+            border: 1px solid #ddd;
+            background: transparent;
+            color: inherit;
+            font-size: 15px;
+            outline: none;
+            box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .search-btn {
+            padding: 10px 14px;
+            border-radius: 12px;
+            border: none;
+            cursor: pointer;
+            font-weight: 600;
+            letter-spacing: 0.2px;
+            background: linear-gradient(135deg, var(--blue-1), var(--blue-2));
+            color: #fff;
+            box-shadow: 0 8px 24px rgba(3, 169, 244, 0.2);
+            transition: transform .12s ease;
+        }
+
+        .search-btn:active {
+            transform: translateY(1px) scale(.997);
+        }
+        
+        .card {
+            position: relative;
+            padding: 28px;
+            border-radius: 18px;
+            overflow: hidden;
+            min-height: 320px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            background: #e1f5fe;
+            border: 1px solid rgba(0,0,0,0.04);
+            box-shadow: 0 20px 40px rgba(2, 6, 23, 0.15);
+        }
+        
+        .temp-display {
+            font-size: 64px;
+            font-weight: 700;
+            text-align: center;
+            margin: 20px 0 10px;
+        }
+        
+        .details-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin-top: 20px;
+            text-align: center;
+        }
+        
+        .detail-item {
+            background: rgba(255, 255, 255, 0.5);
+            padding: 15px 10px;
+            border-radius: 12px;
+            border: 1px solid rgba(0,0,0,0.05);
+            color: #333;
+        }
+        
+        .detail-item .value {
+            font-size: 1.2em;
+            font-weight: 600;
+        }
+        
+        .detail-item .label {
+            font-size: 0.8em;
+            color: #666;
+            margin-top: 5px;
+        }
+
+        .loader {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            border: 4px solid rgba(0,0,0,0.1);
+            border-top-color: var(--blue-1);
+            animation: spin 1s linear infinite;
+            margin: 0 auto;
+        }
+        
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+        
+        @media (max-width: 880px) {
+            .container {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="mobile-frame">
+        <div class="container">
+            <div class="panel">
+                <h1>Weather App</h1>
+                <p class="lead">Get the current weather for any location.</p>
+                <div class="search-container">
+                    <input type="text" id="cityInput" placeholder="Enter city name..." />
+                    <button id="searchBtn" class="search-btn">Get Weather</button>
+                </div>
+                <div style="margin-top:18px; display:flex; gap:10px; align-items:center">
+                    <div id="status" style="display:flex; align-items:center;"></div>
+                </div>
+            </div>
+
+            <div class="card" id="weatherCard">
+                <div id="weatherInfo">
+                    <div style="text-align:center; color:var(--muted); font-size:14px; line-height:1.6;">
+                        <div class="loader" aria-hidden="true"></div>
+                        <div style="margin-top: 10px;">Loading weather...</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_KEY = 'c9be3e0c0a524f52b6a174659253108';
+        const weatherInfoDiv = document.getElementById('weatherInfo');
+        const cityInput = document.getElementById('cityInput');
+        const searchBtn = document.getElementById('searchBtn');
+        const statusEl = document.getElementById('status');
+        const weatherCard = document.getElementById('weatherCard');
+
+        function setLoading(on) {
+            if (on) {
+                statusEl.innerHTML = '<div class="loader" aria-hidden="true"></div><div>Loading...</div>';
+                searchBtn.disabled = true;
+            } else {
+                statusEl.innerHTML = '';
+                searchBtn.disabled = false;
+            }
+        }
+
+        async function fetchWeather(query) {
+            setLoading(true);
+            const url = `https://api.weatherapi.com/v1/current.json?key=${API_KEY}&q=${encodeURIComponent(query)}`;
+
+            try {
+                const response = await fetch(url);
+                if (!response.ok) {
+                    throw new Error('Location not found. Please try again.');
+                }
+                const data = await response.json();
+                renderWeather(data);
+            } catch (error) {
+                weatherInfoDiv.innerHTML = `<div style="text-align:center; color:var(--red); font-size:14px; line-height:1.6;">Error: ${error.message}</div>`;
+                console.error("Error fetching weather data:", error);
+                setLoading(false);
+            }
+        }
+
+        function renderWeather(data) {
+            setLoading(false);
+
+            if (!data || !data.current || !data.location) {
+                weatherInfoDiv.innerHTML = `<div style="text-align:center; color:var(--muted); font-size:14px; line-height:1.6;">No weather data available.</div>`;
+                return;
+            }
+
+            const location = data.location.name;
+            const temp = Math.round(data.current.temp_c);
+            const conditionText = data.current.condition.text;
+            const feelsLike = Math.round(data.current.feelslike_c);
+            const humidity = data.current.humidity;
+            const windSpeed = data.current.wind_kph;
+            const isDay = data.current.is_day;
+            const localtime = data.location.localtime.split(' ')[1];
+            
+            weatherInfoDiv.innerHTML = `
+                <div style="text-align: center;">
+                    <h2 style="font-size: 2.5em; margin: 0; color: #333;">${location}</h2>
+                    <p style="color: #666; font-size: 1.1em; margin-top: 5px;">${conditionText}</p>
+                </div>
+                <div style="text-align:center; font-size:64px; font-weight:700; margin:20px 0 10px; color:#333;">${temp}°C</div>
+                <div class="details-grid">
+                    <div class="detail-item">
+                        <div class="value">${feelsLike}°C</div>
+                        <div class="label">Feels Like</div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="value">${humidity}%</div>
+                        <div class="label">Humidity</div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="value">${windSpeed} kph</div>
+                        <div class="label">Wind</div>
+                    </div>
+                </div>
+                <p style="text-align: center; color: #666; font-size: 0.8em; margin-top: 20px;">
+                    Last updated: ${localtime}
+                </p>
+            `;
+        }
+
+        // Event listeners
+        searchBtn.addEventListener('click', () => {
+            const query = cityInput.value.trim();
+            if (query) {
+                fetchWeather(query);
+            }
+        });
+        
+        cityInput.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') {
+                const query = cityInput.value.trim();
+                if (query) {
+                    fetchWeather(query);
+                }
+            }
+        });
+
+        // Initial load
+        window.addEventListener('load', () => {
+            const defaultLocation = "kondompatti sri eshwar college of engineering coimbatore";
+            fetchWeather(defaultLocation);
+        });
+    </script>
+</body>
+</html>

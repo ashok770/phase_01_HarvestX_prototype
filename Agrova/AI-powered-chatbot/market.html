@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Market Prices App</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&family=Open+Sans:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        /* ================= THEME ================= */
+        :root {
+          --primary-color: #2e7d32;
+          --secondary-color: #5d4037;
+          --background-color: #e8f5e9;
+          --header-bg: #2e7d32;
+          --header-text: #fff;
+          --text-color: #333;
+          --card-bg: #fff;
+        }
+
+        /* ================= BODY ================= */
+        body {
+          background: linear-gradient(135deg, #c8e6c9, #a5d6a7);
+          font-family: 'Montserrat', sans-serif;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          min-height: 100vh;
+          margin: 0;
+          overflow: hidden;
+        }
+
+        /* ================= iPHONE 16 PRO MAX FRAME ================= */
+        .mobile-frame {
+          width: 430px;
+          height: 932px;
+          background: #fff;
+          border-radius: 50px;
+          border: 12px solid #111;
+          box-shadow: 0 25px 60px rgba(0,0,0,0.4);
+          overflow: hidden;
+          display: flex;
+          flex-direction: column;
+          position: relative;
+        }
+
+        /* Notch */
+        .notch {
+          position: absolute;
+          top: 0;
+          left: 50%;
+          transform: translateX(-50%);
+          width: 180px;
+          height: 30px;
+          background: #111;
+          border-bottom-left-radius: 20px;
+          border-bottom-right-radius: 20px;
+          z-index: 10;
+        }
+
+        /* ================= APP CONTAINER ================= */
+        .container {
+          flex: 1;
+          background: var(--card-bg);
+          border-radius: 0;
+          padding: 25px;
+          text-align: center;
+          animation: fadeIn 0.8s ease-in-out;
+          overflow-y: auto;
+        }
+
+        /* ================= HEADER ================= */
+        .app-header h1 {
+          font-size: 22px;
+          color: var(--primary-color);
+          margin-bottom: 20px;
+          line-height: 1.4;
+        }
+
+        /* ================= FORM / INPUT SECTION ================= */
+        .input-section {
+          margin-bottom: 20px;
+        }
+
+        .input-group {
+          text-align: left;
+          margin-bottom: 15px;
+        }
+
+        .input-group label {
+          font-size: 14px;
+          font-weight: 600;
+          display: block;
+          margin-bottom: 6px;
+          color: var(--text-color);
+        }
+        
+        /* General Input Styling for Text Fields */
+        .input-group input[type="text"] {
+          width: 100%;
+          padding: 12px 14px;
+          border-radius: 10px;
+          border: 1px solid #ccc;
+          font-size: 15px;
+          transition: 0.3s;
+          box-sizing: border-box; /* Crucial for full width */
+        }
+        
+        .input-group input[type="text"]:focus {
+          border-color: var(--primary-color);
+          box-shadow: 0 0 0 3px rgba(46,125,50,0.3);
+          outline: none;
+        }
+
+        /* ================= BUTTONS ================= */
+        .btn {
+          width: 100%;
+          background: var(--primary-color);
+          color: #fff;
+          padding: 14px;
+          border-radius: 12px;
+          border: none;
+          cursor: pointer;
+          font-size: 16px;
+          font-weight: 600;
+          transition: 0.2s;
+          margin-top: 10px;
+        }
+        .btn:hover { background: #1b5e20; transform: scale(1.03); }
+        .btn:active { transform: scale(0.95); }
+
+        /* ================= RESULTS SECTION ================= */
+        .results-section {
+          margin-top: 20px;
+          padding-top: 10px;
+          border-radius: 14px;
+          min-height: 80px;
+          font-size: 15px;
+          color: var(--text-color);
+        }
+        
+        .search-info {
+            background-color: var(--background-color);
+            padding: 10px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--primary-color);
+        }
+
+        .price-card {
+          background: #fff;
+          padding: 15px;
+          margin: 15px 0;
+          border-radius: 10px;
+          box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+          text-align: left;
+        }
+        
+        .price-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 5px 0;
+            border-bottom: 1px dashed #eee;
+        }
+        
+        .price-row:last-child {
+            border-bottom: none;
+        }
+
+        .price-label {
+            font-weight: 600;
+            color: var(--secondary-color);
+        }
+        
+        .price-value {
+            font-weight: 400;
+            color: var(--text-color);
+        }
+
+        .initial-message {
+            opacity: 0.7;
+            font-size: 14px;
+            text-align: center;
+            padding: 10px;
+        }
+        
+        /* ================= ANIMATIONS ================= */
+        @keyframes fadeIn {
+          from { opacity: 0; transform: scale(0.95); }
+          to { opacity: 1; transform: scale(1); }
+        }
+
+        @keyframes fadeInUp {
+          from { opacity: 0; transform: translateY(20px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Floating bubbles background (omitted for brevity, assume present) */
+    </style>
+</head>
+<body>
+    <div class="background-animation"></div>
+
+    <div class="mobile-frame">
+        <div class="container">
+            <header class="app-header">
+                <h1>Agmarknet Price Tracker</h1>
+            </header>
+
+            <form id="priceForm">
+                <section class="input-section">
+                    <div class="input-group">
+                        <label for="commodity-input">Commodity</label>
+                        <input type="text" id="commodity-input" name="commodity" placeholder="e.g., Tomato" required>
+                    </div>
+
+                    <div class="input-group">
+                        <label for="district-input">District</label>
+                        <input type="text" id="district-input" name="district" placeholder="e.g., Erode" required>
+                    </div>
+
+                    <div class="input-group">
+                        <label for="state-input">State (Optional)</label>
+                        <input type="text" id="state-input" name="state" placeholder="e.g., Tamil Nadu">
+                    </div>
+
+                    <button type="submit" class="btn">Get Prices</button>
+                </section>
+            </form>
+
+            <section id="prices-container" class="results-section">
+                <p class="initial-message">Search the latest market prices of your commodity.</p>
+            </section>
+        </div>
+    </div>
+
+    <script>
+        // Data structure based on Agmarknet results - EXPANDED DATASET
+        const agmarknetData = [
+            // --- Tamil Nadu Entries ---
+            {
+                "commodity": "Tomato", 
+                "district": "Erode", 
+                "state": "Tamil Nadu",
+                "markets": [
+                    {
+                        "location": "Perundurai (Uzhavar Sandhai)",
+                        "variety": "Deshi",
+                        "min_price": "₹2600.0",
+                        "modal_price": "₹3000.0",
+                        "max_price": "₹3000.0",
+                        "price_unit": "Rs/Quintal",
+                        "arrival_date": "2025-09-25"
+                    },
+                    {
+                        "location": "Gobichettipalayam (Uzhavar Sandhai)",
+                        "variety": "Hybrid",
+                        "min_price": "₹2800.0",
+                        "modal_price": "₹3200.0",
+                        "max_price": "₹3500.0",
+                        "price_unit": "Rs/Quintal",
+                        "arrival_date": "2025-09-25"
+                    }
+                ]
+            },
+            {
+                "commodity": "Groundnut", 
+                "district": "Coimbatore", 
+                "state": "Tamil Nadu",
+                "markets": [
+                    {
+                        "location": "Coimbatore Mandi",
+                        "variety": "Local",
+                        "min_price": "₹6500.0",
+                        "modal_price": "₹6800.0",
+                        "max_price": "₹7000.0",
+                        "price_unit": "Rs/Quintal",
+                        "arrival_date": "2025-09-26"
+                    }
+                ]
+            },
+            {
+                "commodity": "Rice", 
+                "district": "Tirunelveli", 
+                "state": "Tamil Nadu",
+                "markets": [
+                    {
+                        "location": "Tirunelveli Mandi",
+                        "variety": "Ponni",
+                        "min_price": "₹4200.0",
+                        "modal_price": "₹4500.0",
+                        "max_price": "₹4800.0",
+                        "price_unit": "Rs/Quintal",
+                        "arrival_date": "2025-09-26"
+                    }
+                ]
+            },
+            // --- Kerala Entries ---
+            {
+                "commodity": "Coconut", 
+                "district": "Ernakulam", 
+                "state": "Kerala",
+                "markets": [
+                    {
+                        "location": "Kochi Mandi",
+                        "variety": "Ordinary",
+                        "min_price": "₹2800.0",
+                        "modal_price": "₹3000.0",
+                        "max_price": "₹3150.0",
+                        "price_unit": "Rs/Quintal",
+                        "arrival_date": "2025-09-26"
+                    }
+                ]
+            },
+            {
+                "commodity": "Pepper", 
+                "district": "Idukki", 
+                "state": "Kerala",
+                "markets": [
+                    {
+                        "location": "Idukki Spices Market",
+                        "variety": "Garbled",
+                        "min_price": "₹450.0",
+                        "modal_price": "₹475.0",
+                        "max_price": "₹490.0",
+                        "price_unit": "Rs/Kg",
+                        "arrival_date": "2025-09-25"
+                    }
+                ]
+            },
+            // --- Maharashtra/MP/Rajasthan Entries (Expanded) ---
+            {
+                "commodity": "Onion", 
+                "district": "Nashik", 
+                "state": "Maharashtra",
+                "markets": [
+                    {
+                        "location": "Lasalgaon",
+                        "variety": "Red Nasik",
+                        "min_price": "₹1500.0",
+                        "modal_price": "₹1800.0",
+                        "max_price": "₹2000.0",
+                        "price_unit": "Rs/Quintal",
+                        "arrival_date": "2025-09-26"
+                    }
+                ]
+            },
+            {
+                "commodity": "Wheat", 
+                "district": "Jaipur", 
+                "state": "Rajasthan",
+                "markets": [
+                    {
+                        "location": "Jaipur Grain Mandi",
+                        "variety": "Lal Bahadur",
+                        "min_price": "₹2350.0",
+                        "modal_price": "₹2450.0",
+                        "max_price": "₹2550.0",
+                        "price_unit": "Rs/Quintal",
+                        "arrival_date": "2025-09-26"
+                    }
+                ]
+            },
+            {
+                "commodity": "Maize", 
+                "district": "Indore", 
+                "state": "Madhya Pradesh",
+                "markets": [
+                    {
+                        "location": "Indore Grain Mandi",
+                        "variety": "Yellow Maize",
+                        "min_price": "₹2000.0",
+                        "modal_price": "₹2150.0",
+                        "max_price": "₹2300.0",
+                        "price_unit": "Rs/Quintal",
+                        "arrival_date": "2025-09-25"
+                    }
+                ]
+            }
+        ];
+
+        function createPriceRow(label, value) {
+            return `
+                <div class="price-row">
+                    <span class="price-label">${label}</span>
+                    <span class="price-value">${value}</span>
+                </div>
+            `;
+        }
+
+        document.getElementById('priceForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+            const resultsDiv = document.getElementById('prices-container');
+            const commodity = document.getElementById('commodity-input').value.trim();
+            const district = document.getElementById('district-input').value.trim();
+            const state = document.getElementById('state-input').value.trim();
+            
+            if (!commodity || !district) {
+                resultsDiv.innerHTML = '<p class="error-message">Please enter both Commodity and District.</p>';
+                return;
+            }
+
+            resultsDiv.innerHTML = '<p class="loading-message">Searching Agmarknet data...</p>';
+            
+            // Normalize inputs for searching
+            const searchCommodity = commodity.toLowerCase();
+            const searchDistrict = district.toLowerCase();
+
+            // Find the matching data entry
+            // NOTE: We now search by COMMODITY and DISTRICT (case-insensitive)
+            const matchedEntries = agmarknetData.filter(item => 
+                item.commodity.toLowerCase() === searchCommodity &&
+                item.district.toLowerCase() === searchDistrict
+            );
+
+            resultsDiv.innerHTML = ''; // Clear loading message
+
+            if (matchedEntries.length > 0) {
+                // If the user searches "Tomato" in "Erode", they will see all markets in Erode for Tomato.
+                const infoHtml = `<p class="search-info">Displaying **${matchedEntries.length}** result(s) for '${commodity}' in '${district}'.</p>`;
+                resultsDiv.innerHTML = infoHtml;
+                
+                matchedEntries.forEach(dataEntry => {
+                    dataEntry.markets.forEach(market => {
+                        const cardHtml = `
+                            <div class="price-card">
+                                ${createPriceRow('Arrival Date', market.arrival_date)}
+                                ${createPriceRow('Market Location', market.location)}
+                                ${createPriceRow('Commodity Name', dataEntry.commodity)}
+                                ${createPriceRow('Variety', market.variety)}
+                                ${createPriceRow('Minimum Price', market.min_price)}
+                                ${createPriceRow('Modal Price', market.modal_price)}
+                                ${createPriceRow('Maximum Price', market.max_price)}
+                                ${createPriceRow('Price Unit', market.price_unit)}
+                            </div>
+                        `;
+                        resultsDiv.innerHTML += cardHtml;
+                    });
+                });
+            } else {
+                resultsDiv.innerHTML = '<p class="no-results-message">No current prices found for this combination. Please try a different commodity or district.</p>';
+            }
+        });
+    </script>
+</body>
+</html>

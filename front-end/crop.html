@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Crop Lifecycle Tracker</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&family=Open+Sans:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        /* ================= THEME ================= */
+        :root {
+            --primary-color: #2e7d32;
+            --secondary-color: #5d4037;
+            --background-color: #e8f5e9;
+            --header-bg: #2e7d32;
+            --header-text: #fff;
+            --text-color: #333;
+            --card-bg: #fff;
+        }
+
+        /* ================= BODY ================= */
+        body {
+            background: linear-gradient(135deg, #c8e6c9, #a5d6a7);
+            font-family: 'Montserrat', sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            overflow: hidden;
+        }
+
+        /* ================= iPHONE 16 PRO MAX FRAME ================= */
+        .mobile-frame {
+            width: 430px;   
+            height: 932px;  
+            background: #fff;
+            border-radius: 50px;
+            border: 12px solid #111; 
+            box-shadow: 0 25px 60px rgba(0,0,0,0.4);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+        }
+
+        /* Notch */
+        .mobile-frame::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 180px;
+            height: 30px;
+            background: #111;
+            border-bottom-left-radius: 20px;
+            border-bottom-right-radius: 20px;
+        }
+
+        /* ================= APP CONTAINER ================= */
+        .container {
+            flex: 1;
+            background: var(--card-bg);
+            border-radius: 0;
+            padding: 25px;
+            text-align: center;
+            animation: fadeIn 0.8s ease-in-out;
+            overflow-y: auto;
+        }
+
+        /* ================= HEADER ================= */
+        .container h1 {
+            font-size: 22px;
+            color: var(--primary-color);
+            margin-bottom: 20px;
+            line-height: 1.4;
+        }
+
+        /* ================= FORM ================= */
+        .form-group {
+            text-align: left;
+            margin-bottom: 18px;
+        }
+
+        .form-group label {
+            font-size: 14px;
+            font-weight: 600;
+            display: block;
+            margin-bottom: 6px;
+            color: var(--text-color);
+        }
+
+        .form-group select,
+        .form-group input {
+            width: 100%;
+            padding: 12px 14px;
+            border-radius: 10px;
+            border: 2px solid #ccc;
+            font-size: 15px;
+            transition: 0.3s;
+        }
+
+        .form-group select:focus,
+        .form-group input:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(46,125,50,0.3);
+            outline: none;
+        }
+
+        /* ================= BUTTON ================= */
+        .btn {
+            width: 100%;
+            background: var(--primary-color);
+            color: #fff;
+            padding: 14px;
+            border-radius: 12px;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            transition: 0.2s;
+        }
+        .btn:hover { background: #1b5e20; transform: scale(1.03); }
+        .btn:active { transform: scale(0.95); }
+
+        /* ================= RESULTS ================= */
+        #calendar_results {
+            margin-top: 22px;
+            background: var(--background-color);
+            padding: 16px;
+            border-radius: 14px;
+            min-height: 80px;
+            font-size: 15px;
+            color: var(--text-color);
+            animation: fadeInUp 0.6s ease;
+        }
+
+        .initial-message {
+            opacity: 0.7;
+            font-size: 14px;
+            text-align: center;
+        }
+
+        /* ================= ANIMATIONS ================= */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: scale(0.95); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Floating bubbles background */
+        .background-animation {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            z-index: -1;
+            overflow: hidden;
+        }
+        .background-animation::before,
+        .background-animation::after {
+            content: '';
+            position: absolute;
+            width: 300px; height: 300px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.15);
+            animation: float 10s infinite;
+        }
+        .background-animation::after {
+            width: 200px; height: 200px;
+            top: 20%; left: 70%;
+            animation-duration: 14s;
+        }
+
+        @keyframes float {
+            0% { transform: translateY(0) translateX(0); }
+            50% { transform: translateY(-40px) translateX(30px); }
+            100% { transform: translateY(0) translateX(0); }
+        }
+
+        /* Typing Indicator */
+        .typing-indicator {
+            display: flex;
+            justify-content: center;
+            gap: 6px;
+            padding: 10px;
+        }
+        .typing-indicator span {
+            width: 8px;
+            height: 8px;
+            background: var(--primary-color);
+            border-radius: 50%;
+            animation: blink 1.4s infinite both;
+        }
+        .typing-indicator span:nth-child(2) { animation-delay: 0.2s; }
+        .typing-indicator span:nth-child(3) { animation-delay: 0.4s; }
+
+        @keyframes blink {
+            0%, 80%, 100% { opacity: 0; transform: scale(0.8); }
+            40% { opacity: 1; transform: scale(1); }
+        }
+    </style>
+</head>
+<body>
+    <!-- Floating background bubbles -->
+    <div class="background-animation"></div>
+
+    <!-- iPhone 16 Pro Max Frame -->
+    <div class="mobile-frame">
+        <!-- Notch -->
+        <div class="container">
+            <h1>🌱 Crop Lifecycle Tracker 🌾</h1>
+            <form id="cropForm">
+                <div class="form-group">
+                    <label for="crop_name">Select Crop:</label>
+                    <select name="crop_name" id="crop_name">
+                        <option value="Maize (Corn)">Maize (Corn)</option>
+                        <option value="Wheat">Wheat</option>
+                        <option value="Rice">Rice</option>
+                        <option value="Potatoes">Potatoes</option>
+                        <option value="Sugarcane">Sugarcane</option>
+                        <option value="Soybeans">Soybeans</option>
+                        <option value="Cassava">Cassava</option>
+                        <option value="Barley">Barley</option>
+                        <option value="Tomatoes">Tomatoes</option>
+                        <option value="Bananas">Bananas</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="sowing_date">Sowing Date:</label>
+                    <input type="date" name="sowing_date" id="sowing_date" required>
+                </div>
+                <button type="submit" class="btn">Generate Calendar</button>
+            </form>
+
+            <div id="calendar_results">
+                <p class="initial-message">Select a crop and sowing date to generate its lifecycle calendar.</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const cropForm = document.getElementById("cropForm");
+        const results = document.getElementById("calendar_results");
+
+        // Fake lifecycle data
+        const cropLifecycle = {
+            "Maize (Corn)": ["Sowing → Week 1", "Vegetative → Week 4", "Flowering → Week 8", "Harvest → Week 16"],
+            "Wheat": ["Sowing → Week 1", "Tillering → Week 3", "Booting → Week 6", "Harvest → Week 14"],
+            "Rice": ["Sowing → Week 1", "Transplanting → Week 3", "Flowering → Week 9", "Harvest → Week 18"],
+            "Potatoes": ["Planting → Week 1", "Tuber Initiation → Week 4", "Bulking → Week 8", "Harvest → Week 12"],
+            "Sugarcane": ["Planting → Week 1", "Tillering → Week 6", "Grand Growth → Week 12", "Harvest → Week 40"],
+            "Soybeans": ["Sowing → Week 1", "Flowering → Week 5", "Pod Filling → Week 9", "Harvest → Week 14"],
+            "Cassava": ["Planting → Week 1", "Root Development → Week 8", "Bulking → Week 20", "Harvest → Week 40"],
+            "Barley": ["Sowing → Week 1", "Tillering → Week 3", "Flowering → Week 7", "Harvest → Week 12"],
+            "Tomatoes": ["Sowing → Week 1", "Flowering → Week 5", "Fruit Set → Week 8", "Harvest → Week 12"],
+            "Bananas": ["Planting → Month 1", "Vegetative Growth → Month 4", "Flowering → Month 8", "Harvest → Month 12"]
+        };
+
+        cropForm.addEventListener("submit", function(e) {
+            e.preventDefault();
+            const crop = document.getElementById("crop_name").value;
+            const sowingDate = document.getElementById("sowing_date").value;
+
+            if (!crop || !sowingDate) {
+                results.innerHTML = `<p>Please select a crop and date.</p>`;
+                return;
+            }
+
+            // Show typing indicator
+            results.innerHTML = `<div class="typing-indicator"><span></span><span></span><span></span></div>`;
+
+            setTimeout(() => {
+                const phases = cropLifecycle[crop] || ["Lifecycle data not available."];
+                let html = `<h3>🌱 Lifecycle for ${crop}</h3><p><strong>Sowing Date:</strong> ${sowingDate}</p><ul>`;
+                phases.forEach(stage => html += `<li>${stage}</li>`);
+                html += "</ul>";
+                results.innerHTML = html;
+            }, 1200);
+        });
+    </script>
+</body>
+</html>
